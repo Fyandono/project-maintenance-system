@@ -1,0 +1,42 @@
+.container {
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 6px #0000001a;
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+.titleWrapper {
+	background-color: #264275;
+	padding: 14px 18px;
+}
+.title {
+	margin: 0;
+	font-weight: 600;
+	color: #fff;
+	font-size: 0.8em;
+}
+.content {
+	padding: 4px 16px 16px;
+}
+.row {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 0;
+	border-bottom: 1px solid #eee;
+	font-size: 0.8em;
+}
+.label {
+	font-weight: 600;
+	color: #555;
+	width: 40%;
+}
+.value {
+	width: 60%;
+	text-align: right;
+	color: #333;
+	font-weight: 500;
+}
+.right {
+	color: #333;
+	font-weight: 500;
+}

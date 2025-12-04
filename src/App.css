@@ -1,0 +1,22 @@
+/* src/App.css */
+
+/* .App-Layout class used in App.jsx */
+.App-Layout {
+  /* This container helps organize the main content flow */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1680px;
+}
+
+/* A general style for page headings */
+.App-Layout h1 {
+  font-size: 1em;
+  font-weight: 600; /* Slightly bolder than standard */
+  color: #1e293b;
+}
+
+.App-Layout h2 {
+  font-size: 1em;
+  font-weight: 600; /* Slightly bolder than standard */
+}

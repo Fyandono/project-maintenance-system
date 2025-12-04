@@ -1,0 +1,65 @@
+/* src/features/auth/components/LoginForm.module.css */
+
+.loginForm {
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.loginForm h2 {
+  margin-top: 0;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.loginForm label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.loginForm input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  
+  /* ⭐️ FIX: Explicitly inherit font family */
+  font-family: inherit; 
+  font-size: 16px; 
+}
+
+.loginForm button {
+  width: 100%;
+  padding: 12px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  
+  /* ⭐️ FIX: Explicitly inherit font family */
+  font-family: inherit;
+  /* ⭐️ IMPROVEMENT: Use 16px (standard base size) instead of 12px for better readability */
+  font-size: 16px; 
+}
+
+.loginForm button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.loginForm button:disabled {
+  background-color: #a0c3e8;
+  cursor: not-allowed;
+}

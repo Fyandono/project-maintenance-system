@@ -1,0 +1,129 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    width: 550px;
+    max-width: 95%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.modalContent h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: #264275;
+}
+
+/* Validation Error Styles (Derived from React component structure) */
+.validationError {
+    padding: 12px;
+    background-color: #fee2e2; /* light red */
+    border: 1px solid #f87171; /* red border */
+    color: #b91c1c; /* dark red text */
+    border-radius: 8px;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+/* Two-column grid form */
+.formGrid {
+    display: grid;
+    grid-template-columns: 150px 1fr; /* label width fixed, input takes remaining */
+    gap: 12px 16px;
+    align-items: center;
+}
+
+.formGrid label {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.formGrid input[type="text"],
+.formGrid input[type="password"],
+.formGrid select,
+.formGrid textarea {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9em;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.formGrid textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+/* Checkbox specific styles (Derived from React component structure) */
+.checkboxContainer {
+    /* To align with the input column */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Ensure this starts on the correct column if needed, otherwise it's just a flex container */
+    padding: 8px 0; 
+}
+
+.checkbox {
+    /* Style the checkbox, assuming standard input[type="checkbox"] styling */
+    height: 20px;
+    width: 20px;
+}
+
+.checkboxLabel {
+    /* Style for the label next to the checkbox */
+    font-size: 0.9em;
+    color: #333;
+    font-weight: normal;
+}
+
+
+.modalButtons {
+    grid-column: 2 / 3; /* buttons start under input column */
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.modalButtons button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.modalButtons button[type="submit"] {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.modalButtons button[type="submit"]:hover {
+    background-color: #1d345c;
+}
+
+.modalButtons button[type="button"] {
+    background-color: #eee;
+    color: #333;
+}
+
+.modalButtons button[type="button"]:hover {
+    background-color: #ccc;
+}

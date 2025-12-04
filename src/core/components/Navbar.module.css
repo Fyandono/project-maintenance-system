@@ -1,0 +1,77 @@
+/* Navbar.module.css */
+
+/* ⭐️ NEW: Main container to achieve right alignment */
+.navbarRightContainer {
+    display: flex;
+    justify-content: space-between; /* Pushes content to the sides */
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #2c3e50;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ⭐️ NEW: Container for logo and links (left side) */
+.navbarLeft {
+    display: flex;
+    align-items: center;
+}
+
+/* Grouping the nav links */
+.navLinks {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 40px;
+}
+
+.navLink {
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 12px;
+    margin-right: 25px;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.activeLink {
+    font-weight: bold;
+    color: #00c28c;
+    border-bottom: 2px solid #00c28c;
+}
+
+/* ⭐️ NEW: Right-hand side styling */
+.navbarRight {
+    display: flex;
+    align-items: center;
+}
+
+.usernameDisplay {
+    font-size: 14px;
+    font-weight: bold;
+    color: #f0f0f0; /* Slightly lighter color for text */
+}
+
+@media print {
+    .noPrint,
+    .actionRow { 
+        display: none !important;
+    }
+
+    .container {
+        width: 100% !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+    
+    .titleWrapper {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

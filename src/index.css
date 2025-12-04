@@ -1,0 +1,62 @@
+/* src/index.css */
+
+/* Global Reset: Use border-box for easier layout calculation */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Base Styles: Apply the preferred system-default sans-serif stack */
+:root {
+  --primary-color: #2471b6;
+
+  /* ⭐️ This is where the global font is defined */
+  --font-family-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Apply font and background to the body */
+body {
+  margin: 0;
+  /* ⭐️ Applying the variable to the document body */
+  font-family: var(--font-family-sans);
+  color: #333;
+  background-color: #f4f7f9;
+  min-height: 100vh;
+}
+
+/* FIX: Ensure form elements inherit the global font */
+input,
+select,
+textarea,
+button {
+  /* This ensures form elements use the font defined on the body */
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Remove margin/padding from lists */
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Clean up anchors */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Ensure root element covers the viewport */
+#root {
+  min-height: 100vh;
+}

@@ -1,0 +1,43 @@
+/* DateRangeFilter.module.css */
+
+.container {
+    position: relative;
+    display: inline-block;
+}
+
+.button {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    min-width: 200px;
+    text-align: left;
+    margin-left: 10px;
+    background-color: white; /* Ensure button background is white for contrast */
+}
+
+.calendarPopup {
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    top: 100%;
+    /* left: 0; */
+    right:0;
+    margin-top: 5px;
+}
+
+.footer {
+    text-align: right;
+    padding: 10px;
+}
+
+.closeButton {
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}

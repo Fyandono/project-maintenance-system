@@ -1,0 +1,132 @@
+.container {
+	width: 100%;
+	align-content: center;
+	padding: 30px;
+}
+.contentWrapper {
+	margin: 20px auto;
+	width: 480px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+}
+.titleWrapper {
+	background-color: #264275;
+	padding: 14px 18px;
+}
+.title {
+	margin: 0;
+	font-weight: 600;
+	color: #fff;
+	font-size: 0.8em;
+}
+.content {
+	padding: 0 16px 16px;
+}
+h3 {
+	color: #555;
+	border-bottom: 1px dashed #ddd;
+	padding-bottom: 5px;
+}
+.row {
+	display: flex;
+	justify-content: space-between;
+	padding: 4px 0;
+	border-bottom: 1px solid #eee;
+	font-size: 0.8em;
+}
+.label {
+	font-weight: 600;
+	color: #555;
+	width: 40%;
+}
+.value {
+	width: 60%;
+	text-align: right;
+	color: #333;
+	font-weight: 500;
+}
+.right {
+	color: #333;
+	font-weight: 500;
+}
+.rejected,
+.unverified,
+.verified {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 500;
+}
+.actionRow {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	margin-left: auto;
+	justify-content: flex-end;
+	border-bottom: none;
+	padding-top: 15px;
+	padding-bottom: 0;
+}
+.detailButton {
+	padding: 4px 6px;
+	background-color: var(--primary-color);
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.8em;
+	font-weight: 500;
+	transition: background-color 0.2s;
+}
+.detailButton:hover {
+	background-color: #0056b3;
+}
+.buttonIcon {
+	margin-right: 2px;
+	line-height: 1;
+}
+.breadcrumb {
+	font-size: 10px;
+	color: #666;
+	margin-bottom: 15px;
+}
+.breadcrumb a {
+	color: #264275;
+	text-decoration: none;
+	font-weight: 500;
+}
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
+.separator {
+	margin: 0 6px;
+	color: #aaa;
+}
+
+.loaderRight {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 999;
+}
+
+@media print {
+	.actionRow,
+	.noPrint,
+	.footer,
+	.header {
+		display: none !important;
+	}
+	.container {
+		width: 100% !important;
+		margin: 0 !important;
+		box-shadow: none !important;
+		border-radius: 0 !important;
+	}
+	.titleWrapper {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+}
