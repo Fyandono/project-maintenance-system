@@ -1,30 +1,31 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setFilter, fetchUsersThunk, createUserThunk, editUserThunk} from "../userSlice";
-import UserTable from "../components/UserTable";
+import {createRoleThunk, editRoleThunk, fetchRolesThunk, setFilter} from "../roleSlice";
+import styles from "./RolePage.module.css";
 import useDebounce from "../../../core/hooks/useDebounce";
-import styles from "./UserPage.module.css";
-import CreateEditUserModal from "../form/CreateEditUserModal";
 import CircularLoader from "../../../core/components/CircularLoader";
-import Pagination from "../../../core/components/Pagination";
+import RoleTable from "../components/RoleTable";
+import CreateEditRoleModal from "../form/CreateEditRoleModal";
 import StatusBanner from "../../../core/components/StatusBanner";
+import Pagination from "../../../core/components/Pagination";
 
-export default function UserPage () {
+export default function RolePage () {
 	const dispatch = useDispatch();
 
 	// Get User Role
 	const user = useSelector((state) => state.auth.user);
-	const canAddUser = user?.can_add_user === true;
+	const canAddRole = user?.can_add_role === true;
 
+	// Select global Redux state (the *actual* filter and data)
 	const {
-		users,
+		roles,
 		totalPage,
 		currentPage,
 		pageSize,
 		filterName: globalFilterName, // Renamed to avoid local state conflict
 		isLoading,
 		error,
-	} = useSelector((state) => state.users);
+	} = useSelector((state) => state.role);
 
 	const [submissionStatus, setSubmissionStatus] = useState(null); // 'success' | 'failure'
 	const [submissionMessage, setSubmissionMessage] = useState(null);
@@ -35,7 +36,7 @@ export default function UserPage () {
 	// 1. LOCAL STATE: Controls the input field value immediately on typing.
 	const [localSearchTerm, setLocalSearchTerm] = useState(globalFilterName);
 
-	// 2. DEBOUNCE HOOK: Delays updating the API filter until user pauses typing for 300ms.
+	// 2. DEBOUNCE HOOK: Delays updating the API filter until role pauses typing for 300ms.
 	const debouncedSearchTerm = useDebounce(localSearchTerm, 300);
 
 	// 3. EFFECT: Watch the debounced value and update the Redux store when it stabilizes.
@@ -49,9 +50,9 @@ export default function UserPage () {
 	// Filters object uses the current global filter (which is driven by the debounce effect)
 	const filters = useMemo(() => ({currentPage, pageSize, filterName: globalFilterName}), [currentPage, pageSize, globalFilterName]);
 
-	// Effect to fetch users whenever the actual Redux filters change (page, pageSize, or stable filterName)
+	// Effect to fetch roles whenever the actual Redux filters change (page, pageSize, or stable filterName)
 	useEffect(() => {
-		dispatch(fetchUsersThunk(filters));
+		dispatch(fetchRolesThunk(filters));
 	}, [filters, dispatch]);
 
 	// Handlers
@@ -59,12 +60,13 @@ export default function UserPage () {
 	const handlePageChange = (page) => dispatch(setFilter({name: "currentPage", value: page}));
 
 	// ⭐️ UPDATED: handles submission and controls modal/banner state
-	const handleUserSubmit = (data) => {
+	const handleRoleSubmit = (data) => {
+		console.log(data);
 		// Clear previous banner message
 		handleCloseBanner();
 
-		const thunk = data.id ? editUserThunk(data) : createUserThunk(data);
-		const action = data.id ? "updated" : "created";
+		const thunk = editData ? editRoleThunk(data) : createRoleThunk(data);
+		const action = editData ? "updated" : "created";
 
 		dispatch(thunk)
 			.unwrap()
@@ -72,20 +74,20 @@ export default function UserPage () {
 				// SUCCESS LOGIC: Close modal, show success banner, re-fetch list
 				setIsModalVisible(false);
 				setSubmissionStatus("success");
-				setSubmissionMessage(`User successfully ${action}.`);
-				dispatch(fetchUsersThunk(filters));
+				setSubmissionMessage(`Role successfully ${action}.`);
+				dispatch(fetchRolesThunk(filters));
 			})
 			.catch ((error) => {
 				// FAILURE LOGIC: DO NOT close modal, show failure banner
 				// Error object might be payload or the error message string
 				const message = error.message || error.toString() || "An unknown error occurred.";
 				setSubmissionStatus("failure");
-				setSubmissionMessage(`Failed to ${action} user: ${message}`);
+				setSubmissionMessage(`Failed to ${action} role: ${message}`);
 
 				// Keep modal open on failure
 				// setIsModalVisible(true); // already true
 
-				console.error("User submission failed:", error);
+				console.error("Role submission failed:", error);
 			});
 	};
 
@@ -101,23 +103,24 @@ export default function UserPage () {
 	};
 
 	// Optional: handle edit (pass project object)
-	const handleOnClickEdit = (user) => {
-		setEditData(user);
+	const handleOnClickEdit = (role) => {
+		setEditData(role);
 		setIsModalVisible(true);
 		handleCloseBanner();
 	};
 
 	return (
-		<div className={styles.userContainer}>
-			<h1>Users</h1>
+		<div className={styles.roleContainer}>
+			<h1>Roles</h1>
 
 			<StatusBanner message={submissionMessage} type={submissionStatus} onClose={handleCloseBanner} />
 
 			<div className={styles.controlRow}>
-				<input key="user-search-input" type="text" placeholder="Search user or username" value={localSearchTerm} onChange={handleSearchChange} />
-				{canAddUser && (
+				<input key="role-search-input" type="text" placeholder="Search role" value={localSearchTerm} onChange={handleSearchChange} />
+
+				{canAddRole && (
 					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
-						+ Create User
+						+ Create Role
 					</button>
 				)}
 			</div>
@@ -129,12 +132,12 @@ export default function UserPage () {
 			)}
 			{error && <p style={{color: "red", fontWeight: "bold"}}>Error loading data: {error}</p>}
 			<div>
-				<UserTable handleEdit={handleOnClickEdit} data={users} currentPage={currentPage} pageSize={pageSize} />
+				<RoleTable handleEdit={handleOnClickEdit} data={roles} currentPage={currentPage} pageSize={pageSize} />
 				<Pagination currentPage={currentPage} totalPage={totalPage} onPageChange={handlePageChange} />
 				<div />
 
 				{/* Modal */}
-				{!isLoading && <CreateEditUserModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} onSubmit={handleUserSubmit} initialData={editData} />}
+				{!isLoading && <CreateEditRoleModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} onSubmit={handleRoleSubmit} initialData={editData} />}
 			</div>
 		</div>
 	);

@@ -1,5 +1,3 @@
-import React from "react";
-// Import useLocation hook to check the current route
 import {Routes, Route, useLocation} from "react-router-dom"; 
 import LoginPage from "./features/auth/pages/LoginPage";
 import VendorPage from "./features/vendor/pages/VendorPage";
@@ -10,6 +8,7 @@ import Navbar from "./core/components/NavBar";
 import UserPage from "./features/user/pages/UserPage";
 import PMDetailPage from "./features/pm/pages/PMDetailPage";
 import UnitPage from "./features/unit/pages/UnitPage";
+import RolePage from "./features/role/pages/RolePage";
 
 export default function App () {
     const location = useLocation();
@@ -48,7 +47,7 @@ export default function App () {
                         }
                     />
 
-                    {/* PROJECT MAINTENANCE */}
+                    {/* Project Monitoring */}
                     <Route
                         path="/vendor/:vendorId/project/:projectId"
                         element={
@@ -58,7 +57,7 @@ export default function App () {
                         }
                     />
 
-                     {/* PROJECT MAINTENANCE */}
+                     {/* Project Monitoring */}
                     <Route
                         path="/vendor/:vendorId/project/:projectId/pm/:pmId"
                         element={
@@ -85,6 +84,16 @@ export default function App () {
                         element={
                             <ProtectedRoute>
                                 <UnitPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ROLE LIST */}
+                    <Route
+                        path="/role"
+                        element={
+                            <ProtectedRoute>
+                                <RolePage />
                             </ProtectedRoute>
                         }
                     />

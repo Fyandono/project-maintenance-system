@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {setFilter, fetchVendorsThunk, createVendorThunk, editVendorThunk} from "../vendorSlice";
 import VendorTable from "../components/VendorTable";
@@ -11,6 +11,10 @@ import StatusBanner from "../../../core/components/StatusBanner";
 
 export default function VendorPage () {
 	const dispatch = useDispatch();
+
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canAddVendor = user?.can_add_vendor === true;
 
 	// Select global Redux state (the *actual* filter and data)
 	const {
@@ -73,15 +77,9 @@ export default function VendorPage () {
 				dispatch(fetchVendorsThunk(filters));
 			})
 			.catch ((error) => {
-				// FAILURE LOGIC: DO NOT close modal, show failure banner
-				// Error object might be payload or the error message string
 				const message = error.message || error.toString() || "An unknown error occurred.";
 				setSubmissionStatus("failure");
 				setSubmissionMessage(`Failed to ${action} vendor: ${message}`);
-
-				// Keep modal open on failure
-				// setIsModalVisible(true); // already true
-
 				console.error("Vendor submission failed:", error);
 			});
 	};
@@ -99,7 +97,7 @@ export default function VendorPage () {
 
 	// Optional: handle edit (pass project object)
 	const handleOnClickEdit = (vendor) => {
-		setEditData(vendor	);
+		setEditData(vendor);
 		setIsModalVisible(true);
 		handleCloseBanner();
 	};
@@ -113,26 +111,26 @@ export default function VendorPage () {
 			<div className={styles.controlRow}>
 				<input key="vendor-search-input" type="text" placeholder="Search vendors" value={localSearchTerm} onChange={handleSearchChange} />
 
-				<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
-					+ Create Vendor
-				</button>
+				{canAddVendor && (
+					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
+						+ Create Vendor
+					</button>
+				)}
 			</div>
 
-		    {isLoading && (
+			{isLoading && (
 				<div className={styles.loaderRight}>
 					<CircularLoader />
 				</div>
 			)}
-
-
 			{error && <p style={{color: "red", fontWeight: "bold"}}>Error loading data: {error}</p>}
 			<div>
 				<VendorTable handleEdit={handleOnClickEdit} data={vendors} currentPage={currentPage} pageSize={pageSize} />
 				<Pagination currentPage={currentPage} totalPage={totalPage} onPageChange={handlePageChange} />
-			<div/>
-		
-			 {/* Modal */}
-			{!isLoading && <CreateEditVendorModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} onSubmit={handleVendorSubmit}  initialData={editData} />}
+				<div />
+
+				{/* Modal */}
+				{!isLoading && <CreateEditVendorModal visible={isModalVisible} onClose={() => setIsModalVisible(false)} onSubmit={handleVendorSubmit} initialData={editData} />}
 			</div>
 		</div>
 	);

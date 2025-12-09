@@ -1,56 +1,66 @@
-import React, {useState, useEffect} from "react"; // ⭐️ Import useState and useEffect
-import {useLocation} from "react-router-dom";
+import React, {useState, useEffect, useRef} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {FaUser, FaChevronDown, FaSignOutAlt} from "react-icons/fa";
+
 import styles from "./Navbar.module.css";
-import {decodeToken} from "../utils/jwt";
+import { logout } from "../../features/auth/authSlice";
 
 const Navbar = () => {
 	const location = useLocation();
-	const currentPath = location.pathname;
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
-	// ⭐️ NEW STATE: To store the username
-	const [username, setUsername] = useState("");
+	const { user } = useSelector((state) => state.auth);
 
-	// ⭐️ EFFECT: Read username from local storage once on mount
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const dropdownRef = useRef(null);
+
+	const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+	// Close dropdown when clicking outside
 	useEffect(() => {
-		// Assume the username is stored under the key 'user' or 'username'
-		const token = localStorage.getItem("accessToken");
-		const claim = decodeToken(token);
-		const storedUsername = claim.name;
-		if (storedUsername) {
-			setUsername(storedUsername);
-		}
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+				setIsDropdownOpen(false);
+			}
+		};
+		document.addEventListener("click", handleClickOutside);
+		return () => document.removeEventListener("click", handleClickOutside);
 	}, []);
 
-	// Helper function to check if a path is active (remains the same)
+	const handleLogout = () => {
+		dispatch(logout());        
+		navigate("/login");     
+	};
+
 	const isPathActive = (path) => {
-		if (path === "/") {
-			return currentPath === path;
-		}
-		return currentPath.startsWith(path);
+		if (path === "/") return location.pathname === path;
+		return location.pathname.startsWith(path);
 	};
 
 	const navLinks = [
 		{name: "Vendors", path: "/vendor"},
 		{name: "Master User", path: "/user"},
 		{name: "Master Unit", path: "/unit"},
+		{name: "Master Role", path: "/role"},
 	];
 
 	return (
 		<nav className={styles.noPrint}>
-			{/* // ⭐️ Use styles.navbarRightContainer to enable space-between */}
 			<nav className={styles.navbarRightContainer}>
 				<div className={styles.navbarLeft}>
-					{/* ⭐️ Use styles.logo */}
-					<span className={styles.logo}>Project System</span>
+					<span className={styles.logo}>Project Monitoring System</span>
 
-					{/* Navigation links */}
 					<div className={styles.navLinks}>
 						{navLinks.map((link) => {
 							const isActive = isPathActive(link.path);
-							const linkClasses = `${styles.navLink} ${isActive ? styles.activeLink : ""}`;
-
 							return (
-								<a key={link.path} href={link.path} className={linkClasses}>
+								<a
+									key={link.path}
+									href={link.path}
+									className={`${styles.navLink} ${isActive ? styles.activeLink : ""}`}
+								>
 									{link.name}
 								</a>
 							);
@@ -58,10 +68,24 @@ const Navbar = () => {
 					</div>
 				</div>
 
-				{/* ⭐️ NEW: Right-hand side for Username */}
-				<div className={styles.navbarRight}>
-					{username && <span className={styles.usernameDisplay}>{username}</span>}
-					{/* You can add a user icon or logout button here */}
+				{/* Right Side Username */}
+				<div className={styles.navbarRight} ref={dropdownRef}>
+					{user && (
+						<div className={styles.userMenu} onClick={toggleDropdown}>
+							<FaUser className={styles.userIcon} />
+							<span className={styles.usernameDisplay}>{user.name}</span>
+							<FaChevronDown className={styles.chevronIcon} />
+
+							{isDropdownOpen && (
+								<div className={styles.dropdownMenu}>
+									<button className={styles.dropdownItem} onClick={handleLogout}>
+										<FaSignOutAlt className={styles.dropdownIcon} />
+										Logout
+									</button>
+								</div>
+							)}
+						</div>
+					)}
 				</div>
 			</nav>
 		</nav>

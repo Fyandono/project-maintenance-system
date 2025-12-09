@@ -1,9 +1,13 @@
 import React from "react";
 import styles from "./UserTable.module.css";
-import { formatDate } from "../../../core/utils/formatDate";
+import {formatDate} from "../../../core/utils/formatDate";
+import {useSelector} from "react-redux";
 
-// ⭐️ The component now accepts currentPage and pageSize as props
 export default React.memo(function UserTable ({handleEdit, data, currentPage, pageSize}) {
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canEditUser = user?.can_edit_user === true;
+
 	if (!data || data.length === 0) {
 		return <p>No user data available based on current filters.</p>;
 	}
@@ -30,7 +34,7 @@ export default React.memo(function UserTable ({handleEdit, data, currentPage, pa
 							<td className={styles.nameCell}>{user.name || "-"}</td>
 							<td>{user.username || "-"}</td>
 							<td>{user.role || "-"}</td>
-							
+
 							<td>
 								<div className={styles.metaInfo}>
 									<span className={styles.metaDate}>{formatDate(user.created_at)}</span>
@@ -58,13 +62,15 @@ export default React.memo(function UserTable ({handleEdit, data, currentPage, pa
 							</td>
 
 							{/* Action Button */}
-							<td className={styles.actionCell}>
-								<div className={styles.actionRow}>
-									<button className={styles.detailButton} onClick={() => handleEdit(user)}>
-										Edit
-									</button>
-								</div>
-							</td>
+							{canEditUser && (
+								<td className={styles.actionCell}>
+									<div className={styles.actionRow}>
+										<button className={styles.detailButton} onClick={() => handleEdit(user)}>
+											Edit
+										</button>
+									</div>
+								</td>
+							)}
 						</tr>
 					))}
 				</tbody>

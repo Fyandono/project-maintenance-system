@@ -11,6 +11,11 @@ import Pagination from "../../../core/components/Pagination";
 
 export default function UnitPage () {
 	const dispatch = useDispatch();
+
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canAddUnit = user?.can_add_unit === true;
+
 	// Select global Redux state (the *actual* filter and data)
 	const {
 		units,
@@ -113,9 +118,11 @@ export default function UnitPage () {
 			<div className={styles.controlRow}>
 				<input key="unit-search-input" type="text" placeholder="Search unit" value={localSearchTerm} onChange={handleSearchChange} />
 
-				<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
-					+ Create Unit
-				</button>
+				{canAddUnit && (
+					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
+						+ Create Unit
+					</button>
+				)}
 			</div>
 
 			{isLoading && (

@@ -10,7 +10,7 @@ const initialUser = initialToken ? decodeToken(initialToken) : null;
 
 // ⚡ 1. The Async Thunk (Login Logic)
 export const loginUserThunk = createAsyncThunk(
-  'auth/login', // Action type prefix
+  'auth/login',
   async ({ username, password }, { rejectWithValue }) => {
     try {
       const token = await apiLoginUser(username, password);

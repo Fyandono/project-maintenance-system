@@ -9,11 +9,14 @@ import CircularLoader from "../../../core/components/CircularLoader";
 import CreateEditPMModal from "../form/CreateEditPMModal";
 import VerifyPMModal from "../form/VerifyPMModal";
 import useDebounce from "../../../core/hooks/useDebounce";
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 import DateRangeFilter from "../../../core/components/DateRangePicker";
 import StatusBanner from "../../../core/components/StatusBanner";
 import Pagination from "../../../core/components/Pagination";
+
+// Data for the new dropdown filter
+const pmTypeOptions = ["Data", "Change Request", "Incident", "Bugs Fixing", "New Project"];
 
 export default function PMPage () {
 	// ⭐️ 1. Read the projectId from the URL (e.g., /pms/123)
@@ -23,23 +26,30 @@ export default function PMPage () {
 
 	const dispatch = useDispatch();
 
-	// ⭐️ 2. SELECTOR CORRECTION: Select state from the 'pms' slice
-	const {pms, 
-        extraData,
-        
-        totalPage, 
-        currentPage, 
-        pageSize, 
-        isLoading,
-        error, 
-        filterDescription: globalFilterDescription,
-        filterProjectId: globalProjectId,
-        filterStartDate: globalFilterStartDate,
-        filterEndDate: globalFilterEndDate
-    } = useSelector((state) => state.pms);
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canAddPM = user?.can_add_pm === true;
 
-    const [localSearchTerm, setLocalSearchTerm] = useState(globalFilterDescription);
-    const debouncedSearchTerm = useDebounce(localSearchTerm, 300);
+	// ⭐️ 2. SELECTOR CORRECTION: Select state from the 'pms' slice
+	const {
+		pms,
+		extraData,
+
+		totalPage,
+		currentPage,
+		pageSize,
+		isLoading,
+		error,
+		filterDescription: globalFilterDescription,
+		filterProjectId: globalProjectId,
+		filterStartDate: globalFilterStartDate,
+		filterEndDate: globalFilterEndDate,
+		// ⭐️ NEW: Select the PM Type filter
+		filterPMType: globalFilterPMType,
+	} = useSelector((state) => state.pms);
+
+	const [localSearchTerm, setLocalSearchTerm] = useState(globalFilterDescription);
+	const debouncedSearchTerm = useDebounce(localSearchTerm, 300);
 
 	// ⭐️ NEW STATE for Submission Status Banner
 	const [submissionStatus, setSubmissionStatus] = useState(null); // 'success' | 'failure'
@@ -51,12 +61,12 @@ export default function PMPage () {
 	const [editData, setEditData] = useState(null);
 	const [verifyData, setVerifyData] = useState(null);
 
-    // EFFECT 1: Watch debounced search term and update Redux
-    useEffect(() => {
-        if (debouncedSearchTerm !== globalFilterDescription) {
-            dispatch(setFilter({name: "filterDescription", value: debouncedSearchTerm}));
-        }
-    }, [debouncedSearchTerm, globalFilterDescription, dispatch]);
+	// EFFECT 1: Watch debounced search term and update Redux
+	useEffect(() => {
+		if (debouncedSearchTerm !== globalFilterDescription) {
+			dispatch(setFilter({name: "filterDescription", value: debouncedSearchTerm}));
+		}
+	}, [debouncedSearchTerm, globalFilterDescription, dispatch]);
 
 	useEffect(() => {
 		if (projectId && projectId !== globalProjectId) {
@@ -64,18 +74,18 @@ export default function PMPage () {
 		}
 	}, [projectId, globalProjectId, dispatch]);
 
-	// ⭐️ 3. FILTERS: Create filters object, including the projectId from Redux
+	// ⭐️ 3. FILTERS: Create filters object, including the projectId and new type filter
 	const filters = useMemo(
 		() => ({
 			currentPage,
 			pageSize,
 			projectId: globalProjectId,
-            filterDescription: globalFilterDescription,
-            filterStartDate: globalFilterStartDate,
-            filterEndDate: globalFilterEndDate
-
+			filterDescription: globalFilterDescription,
+			filterStartDate: globalFilterStartDate,
+			filterEndDate: globalFilterEndDate,
+			filterPMType: globalFilterPMType,
 		}),
-		[currentPage, pageSize, globalProjectId, globalFilterDescription, globalFilterStartDate, globalFilterEndDate],
+		[currentPage, pageSize, globalProjectId, globalFilterDescription, globalFilterStartDate, globalFilterEndDate, globalFilterPMType],
 	);
 
 	// EFFECT 3: Fetch pms whenever filters (including the stable projectId) change
@@ -92,23 +102,29 @@ export default function PMPage () {
 	};
 
 	// Handlers
-    const handleSearchChange = (e) => setLocalSearchTerm(e.target.value);
+	const handleSearchChange = (e) => setLocalSearchTerm(e.target.value);
 	const handlePageChange = (page) => dispatch(setFilter({name: "currentPage", value: page}));
-    const handleDateRangeChange = (dates) => {
-        console.log(dates);
-        const [startDate, endDate] = dates; 
-        dispatch(setFilter({name: "filterStartDate", value: startDate || ""}));
-        dispatch(setFilter({name: "filterEndDate", value: endDate || ""}));
-    };
 
-	// CREATE Handler
+	// ⭐️ NEW HANDLER: Handle change in PM Type dropdown
+	const handleTypeChange = (e) => {
+		dispatch(setFilter({name: "filterPMType", value: e.target.value}));
+	};
+
+	const handleDateRangeChange = (dates) => {
+		console.log(dates);
+		const [startDate, endDate] = dates;
+		dispatch(setFilter({name: "filterStartDate", value: startDate || ""}));
+		dispatch(setFilter({name: "filterEndDate", value: endDate || ""}));
+	};
+
+	// CREATE/EDIT Handler
 	const handlePMSubmit = (data) => {
-
-        setIsModalVisible(false);
-        setEditData(null);
+		setIsModalVisible(false);
+		setEditData(null);
 
 		const thunk = editData ? editPMThunk(data) : createPMthunk(data);
-        const action = editData ? 'updated' : 'created';
+		const action = editData ? "updated" : "created";
+		handleCloseBanner();
 
 		dispatch(thunk)
 			.unwrap()
@@ -149,7 +165,6 @@ export default function PMPage () {
 
 	// UI Click Handlers
 	const handleOnClickVerify = (pmItem) => {
-		console.log(pmItem);
 		setVerifyData(pmItem);
 		setIsModalVerifyVisible(true);
 		handleCloseBanner();
@@ -177,23 +192,39 @@ export default function PMPage () {
 				<span className={styles.separator}>/</span>
 				<a href={`/vendor/${vendorId}`}>Project</a>
 				<span className={styles.separator}>/</span>
-				<span>Project Maintenance</span>
+				<span>Project Monitoring</span>
 			</div>
 
 			<StatusBanner message={submissionMessage} type={submissionStatus} onClose={handleCloseBanner} />
 
-            <h2>Project Maintenance</h2>
+			<h2>Project Monitoring</h2>
 			<div className={styles.controlRow}>
-                <input key="project-search-input" type="text" placeholder="Search description" value={localSearchTerm} onChange={handleSearchChange} />
-                <DateRangeFilter
-                    key="date-range-picker"
-                    onRangeChange={handleDateRangeChange}
-                    startDate={globalFilterStartDate}
-                    endDate={globalFilterEndDate}
-                />
-				<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
-					+ Create PM
-				</button>
+				<div className={styles.inputGroup}>
+					<label for="project-search-input">Search</label>
+					<input key="project-search-input" type="text" placeholder="Search item" value={localSearchTerm} onChange={handleSearchChange} />
+				</div>
+
+				<div className={styles.inputGroup}>
+					<label for="pm-type-filter">Type</label>
+					<select key="pm-type-filter" className={styles.selectInput} value={globalFilterPMType || ""} onChange={handleTypeChange}>
+						<option value="">All Types</option>
+						{pmTypeOptions.map((type) => (
+							<option key={type} value={type}>
+								{type}
+							</option>
+						))}
+					</select>
+				</div>
+
+				<DateRangeFilter key="date-range-picker" onRangeChange={handleDateRangeChange} startDate={globalFilterStartDate} endDate={globalFilterEndDate} />
+
+				{canAddPM && (
+					<div className={styles.verticalDivider}>
+						<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
+							+ Create PM
+						</button>
+					</div>
+				)}
 			</div>
 			{isLoading && (
 				<div className={styles.loaderRight}>

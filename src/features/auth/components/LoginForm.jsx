@@ -1,5 +1,3 @@
-// src/features/auth/components/LoginForm.jsx
-import React from 'react';
 import styles from './LoginForm.module.css';
 
 export default function LoginForm({ 
@@ -12,7 +10,7 @@ export default function LoginForm({
 }) {
   return (
     <form onSubmit={onSubmit} className={styles.loginForm}>
-      <h2>Project Maintenance System</h2>
+      <h2>Project Monitoring System</h2>
       
       <div className={styles.formGroup}>
         <label htmlFor="username">Username</label>

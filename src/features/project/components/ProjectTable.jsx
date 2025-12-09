@@ -3,12 +3,14 @@ import React from "react";
 import styles from "./ProjectTable.module.css";
 import {useNavigate} from "react-router-dom";
 import {formatDate} from "../../../core/utils/formatDate";
+import { useSelector } from "react-redux";
 
 // ⭐️ The component now accepts currentPage and pageSize as props
 export default function ProjectTable ({handleEdit, vendorId, data, currentPage, pageSize}) {
-	// if (!data || data.length === 0) {
-	// 	return <p>No project data available based on current filters.</p>;
-	// }
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canEditProject = user?.can_edit_project === true;
+
 	const headers = ["No", "Name", "Project Type", "PIC Name", "PIC Email", "PIC Unit", "PM Uploaded", "PM Unverified", "PM Verified", "Created Info", "Updated Info", "Action"];
 
 	// Calculate the index offset based on the current page and size
@@ -78,9 +80,11 @@ export default function ProjectTable ({handleEdit, vendorId, data, currentPage, 
 											<button className={styles.detailButton} onClick={() => handleDetailClick(project.id)}>
 												Detail
 											</button>
-											<button className={styles.detailButton} onClick={() => handleEdit(project)}>
-												Edit
-											</button>
+											{canEditProject && (
+												<button className={styles.detailButton} onClick={() => handleEdit(project)}>
+													Edit
+												</button>
+											)}
 										</div>
 									</td>
 								</tr>

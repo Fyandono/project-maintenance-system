@@ -1,16 +1,5 @@
-// src/apiController.js
-// ⭐️ IMPORT: Import the configured client instance
 import apiClient from './apiClient';
 
-/**
- * Executes a unified API request using the globally configured Axios client.
- * This function assumes the global 401 interceptor is already set up in apiClient.js.
- * * @param {string} method - HTTP method ('get', 'post', 'put', 'delete').
- * @param {string} endpoint - The path after the base URL (e.g., '/vendors').
- * @param {object} [data={}] - Request body data (for POST/PUT).
- * @param {object} [params={}] - Query parameters (for GET).
- * @returns {Promise<any>} The response data.
- */
 export const apiController = async ({
   method,
   endpoint,

@@ -19,7 +19,7 @@ const getInitialFormData = (initialProjectId) => ({
 export default function CreateEditPMModal ({visible, onClose, onSubmit, projectName, initialProjectId, initialData=null}) {
 	// Determine if we are in Edit mode
 	const isEditMode = !!initialData;
-	const modalTitle = isEditMode ? "Edit Project Maintenance" : "Create Project Maintenance";
+	const modalTitle = isEditMode ? "Edit Project Monitoring" : "Create Project Monitoring";
 	const submitButtonText = isEditMode ? "Save Changes" : "Create";
 
 	// Function to calculate the initial state based on props
@@ -151,7 +151,7 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 					<RequiredLabel>Project</RequiredLabel>
 					<input type="text" name="projectName" value={projectName} readOnly disabled />
 
-					<RequiredLabel>Description</RequiredLabel>
+					<RequiredLabel>Task</RequiredLabel>
 					<textarea name="pm_description" value={formData.pm_description} onChange={handleChange} required />
 
 					<RequiredLabel>Solution</RequiredLabel>

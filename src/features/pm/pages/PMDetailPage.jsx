@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useParams} from "react-router-dom";
 import {formatDate} from "../../../core/utils/formatDate";
@@ -10,17 +10,26 @@ import {apiController} from "../../../core/api/apiController";
 import CreateEditPMModal from "../form/CreateEditPMModal";
 import VerifyPMModal from "../form/VerifyPMModal";
 import {editPMThunk, verifyPMthunk} from "../pmSlice";
+import StatusBanner from "../../../core/components/StatusBanner";
 
 const PMDetailPage = () => {
 	let params = useParams();
 	const pmId = params.pmId;
-    const projectId = params.projectId;
-    const vendorId = params.vendorId;
+	const projectId = params.projectId;
+	const vendorId = params.vendorId;
 
 	const dispatch = useDispatch();
 
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canEditPM = user?.can_edit_pm === true;
+	const canVerifyPM = user?.can_verify_pm === true;
+
 	// ⭐️ SELECTOR: Get data, loading, and error states from the new slice
 	const {data, project_data, isLoading, error} = useSelector((state) => state.pmDetail);
+
+	const [submissionStatus, setSubmissionStatus] = useState(null); // 'success' | 'failure'
+	const [submissionMessage, setSubmissionMessage] = useState(null);
 
 	// ⭐️ NEW: Modal state
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -66,26 +75,53 @@ const PMDetailPage = () => {
 	const pm = data;
 	const project = project_data;
 
-	// ⭐️ HANDLER: Edit/Create Submission
+	// Handler to dismiss the banner
+	const handleCloseBanner = () => {
+		setSubmissionMessage(null);
+		setSubmissionStatus(null);
+	};
+
+	// ⭐️ HANDLER: Edit/Create Submission (FIXED: Added success/failure banner logic)
 	const handlePMSubmit = (data) => {
 		setIsModalVisible(false);
 		setEditData(null);
+		handleCloseBanner(); // Clear any previous banner
 
 		dispatch(editPMThunk(data))
 			.unwrap()
 			.then(() => {
+				setSubmissionStatus("success");
+				setSubmissionMessage(`Project Monitoring item ID ${data.id} successfully updated.`);
 				dispatch(fetchPMDetailThunk(pmId));
+			})
+			.catch ((err) => {
+				console.error("Edit PM failed:", err);
+				setSubmissionStatus("failure");
+				setSubmissionMessage(`Failed to update PM: ${err.message || "An unknown error occurred"}`);
+				dispatch(fetchPMDetailThunk(pmId)); // Re-fetch to ensure data is fresh
 			});
 	};
 
-	// ⭐️ HANDLER: Verification Submission
+	// ⭐️ HANDLER: Verification Submission (FIXED: Added success/failure banner logic and determined 'action')
 	const handleVerify = (data) => {
 		setIsModalVerifyVisible(false);
 		setVerifyData(null);
+		handleCloseBanner(); // Clear any previous banner
+
+		const action = data.is_verified ? "verified" : "rejected"; // Determine action for message
+
 		dispatch(verifyPMthunk(data))
 			.unwrap()
 			.then(() => {
+				setSubmissionStatus("success");
+				setSubmissionMessage(`Project Monitoring item successfully ${action}.`);
 				dispatch(fetchPMDetailThunk(pmId));
+			})
+			.catch ((err) => {
+				console.error("Verification failed:", err);
+				setSubmissionStatus("failure");
+				setSubmissionMessage(`Failed to ${action} PM: ${err.message || "An unknown error occurred"}`);
+				dispatch(fetchPMDetailThunk(pmId)); // Re-fetch to ensure data is fresh
 			});
 	};
 
@@ -128,14 +164,17 @@ const PMDetailPage = () => {
 	const handlePrint = () => {
 		window.print();
 	};
+
 	// ⭐️ HANDLER: Edit button click
 	const handleEdit = () => {
+		handleCloseBanner();
 		setEditData(pm); // Set current PM data into the edit state
 		setIsModalVisible(true);
 	};
 
 	// ⭐️ HANDLER: Verify button click
 	const handleVerifyClick = () => {
+		handleCloseBanner();
 		setVerifyData(pm); // Set current PM data into the verify state
 		setIsModalVerifyVisible(true);
 	};
@@ -145,15 +184,19 @@ const PMDetailPage = () => {
 			<div className={`${styles.breadcrumb} ${styles.noPrint}`}>
 				<a href="/vendor">Vendor</a>
 				<span className={styles.separator}>/</span>
-				<a href={`/vendor/${vendorId}/project/${projectId}`}>Project</a>
+				<a href={`/vendor/${vendorId}/project/${projectId}}`}>Project</a>
 				<span className={styles.separator}>/</span>
-				<span>Project Maintenance</span>
+				<a href={`/vendor/${vendorId}/project/${projectId}`}>Project Monitoring</a>
+				<span className={styles.separator}>/</span>
+				<span>Detail</span>
 			</div>
+			{submissionMessage && <StatusBanner message={submissionMessage} type={submissionStatus} onClose={handleCloseBanner} />}
 			<div className={styles.contentWrapper}>
 				<div className={styles.titleWrapper}>
-					<h2 className={styles.title}>Project Maintenance Detail (ID: {pmId})</h2>
+					<h2 className={styles.title}>Project Monitoring Detail (ID: {pmId})</h2>
 				</div>
 
+				{/* ⭐️ FIXED: StatusBanner is now rendered here conditionally */}
 				<div className={styles.content}>
 					{/* Main Detail Rows */}
 					<h3>Project</h3>
@@ -171,7 +214,7 @@ const PMDetailPage = () => {
 					<h3>Maintenance</h3>
 
 					<div className={styles.row}>
-						<span className={styles.label}>Description</span>
+						<span className={styles.label}>Task</span>
 						<span className={`${styles.value} ${styles.fullWidth}`}>{pm.pm_description}</span>
 					</div>
 
@@ -206,7 +249,7 @@ const PMDetailPage = () => {
 							)}
 							{isRejected && (
 								<div className={styles.rejected}>
-									<span className={styles.icon}>❌</span> Rejected
+									<span className={styles.icon}>❌</span> Need Revise
 								</div>
 							)}
 							{isWaiting && (
@@ -271,12 +314,13 @@ const PMDetailPage = () => {
 							Print
 						</button>
 
-						{!pm.is_verified && (
+						{/* Only allow edit/verify if not already verified */}
+						{!isVerified && canEditPM && (
 							<button className={styles.detailButton} onClick={() => handleEdit()}>
 								Edit
 							</button>
 						)}
-						{!pm.is_verified && (
+						{!isVerified && canVerifyPM && (
 							<button className={styles.detailButton} onClick={() => handleVerifyClick()}>
 								Verify
 							</button>
@@ -286,7 +330,7 @@ const PMDetailPage = () => {
 
 				{/* ⭐️ RENDER MODALS */}
 				{/* Edit/Create Modal (uses project details for context) */}
-				{!isLoading && pm && (
+				{canEditPM && !isLoading && pm && (
 					<CreateEditPMModal
 						visible={isModalVisible}
 						onClose={() => {
@@ -301,7 +345,7 @@ const PMDetailPage = () => {
 					/>
 				)}
 				{/* Verify Modal */}
-				{!isLoading && pm && (
+				{canVerifyPM && !isLoading && pm && (
 					<VerifyPMModal
 						visible={isModalVerifyVisible}
 						onClose={() => {

@@ -1,17 +1,22 @@
-import React from "react";
 import styles from "./PMTable.module.css";
 import {apiController} from "../../../core/api/apiController";
 import {formatDate} from "../../../core/utils/formatDate";
 import {useNavigate, useParams} from "react-router-dom";
-import { FaDownload } from "react-icons/fa";
+import {FaDownload} from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 // ⭐️ The component now accepts currentPage and pageSize as props
 export default function PMTable ({handleEdit, handleVerifyClick, data, currentPage, pageSize}) {
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canEditPM = user?.can_edit_pm === true;
+	const canVerifyPM = user?.can_verify_pm === true;
+
+		// Headers
+	const headers = ["No", "Task", "Solution", "Type", "PIC Name", "PIC Email", "PIC Unit", "Project Date", "Completion Date", "Created Info", "Updated Info", "Verified Info", "Status", "Action"];
+
 	// Calculate the index offset based on the current page and size
 	const startIndex = (currentPage - 1) * pageSize;
-
-	// Headers
-	const headers = ["No", "Description", "Solution", "Type", "PIC Name", "PIC Email", "PIC Unit", "Project Date", "Completion Date", "Created Info", "Updated Info", "Verified Info", "Status", "Action"];
 
 	// Handler for navigation
 	const handleDownload = async (project_pm_id, url_file) => {
@@ -158,12 +163,12 @@ export default function PMTable ({handleEdit, handleVerifyClick, data, currentPa
 												File
 											</button>
 
-											{!pm.is_verified && (
+											{canEditPM && !pm.is_verified && (
 												<button className={styles.detailButton} onClick={() => handleEdit(pm)}>
 													Edit
 												</button>
 											)}
-											{!pm.is_verified && (
+											{canVerifyPM && !pm.is_verified && (
 												<button className={styles.detailButton} onClick={() => handleVerifyClick(pm)}>
 													Verify
 												</button>

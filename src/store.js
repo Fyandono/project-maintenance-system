@@ -8,6 +8,8 @@ import unitsReducer from './features/project/unitSlice'
 import userReducer from './features/user/userSlice'
 import pmDetailReducer from './features/pm/pmDetailSlice';
 import unitReducer from './features/unit/unitSlice';
+import roleReducer from './features/role/roleSlice';
+import rolesReducer from './features/user/roleSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ export const store = configureStore({
     pmDetail: pmDetailReducer,
     units: unitsReducer,
     users: userReducer,
-    unit: unitReducer
+    unit: unitReducer,
+    role: roleReducer,
+    roles: rolesReducer,
   },
 });

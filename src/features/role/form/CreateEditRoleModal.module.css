@@ -1,0 +1,184 @@
+/* --- Modal Structure (Existing) --- */
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modalHeader {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 16px; /* mb-4 */
+}
+
+/* --- Form Structure & Inputs --- */
+
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* gap-4 */
+}
+
+.textInput {
+    width: 100%;
+    padding: 8px; /* p-2 */
+    border: 1px solid #d1d5db; /* border-gray-300 */
+    border-radius: 8px; /* rounded-lg */
+    /* Focus styles mimicking Tailwind */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.textInput:focus {
+    border-color: #3b82f6; /* focus:border-blue-500 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); /* focus:ring-blue-500 */
+    outline: none;
+}
+
+.sectionDivider {
+    border: none;
+    border-top: 1px solid #e5e7eb; /* border-gray-200 */
+    margin: 8px 0; /* my-2 */
+}
+
+/* --- Basic Fields (Name & Status) --- */
+
+.basicFieldGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 16px; /* gap-4 */
+    align-items: center;
+}
+
+/* --- Permissions Section --- */
+
+.permissionsHeader {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 700; /* font-bold */
+}
+
+.permissionsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* grid-cols-3 */
+    gap: 16px; /* gap-4 */
+}
+
+.permissionBox {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* gap-2 */
+    padding: 12px; /* p-3 */
+    border: 1px solid #e5e7eb; /* border border-gray-200 */
+    border-radius: 8px; /* rounded-lg */
+}
+
+.permissionTitle {
+    font-weight: 600; /* font-semibold */
+    color: #374151; /* text-gray-700 */
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 4px; /* pb-1 */
+    margin-bottom: 4px; /* mb-1 */
+}
+
+.permissionRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.permissionLabel {
+    font-size: 0.875rem; /* text-sm */
+}
+
+/* --- Checkbox Styling (Existing) --- */
+
+.checkboxContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: #3b82f6;
+}
+
+.checkboxLabel {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+}
+
+
+/* --- Buttons (Existing and Updated) --- */
+
+.modalButtons {
+    grid-column: 2 / 3; /* buttons start under input column */
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.modalButtons button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.modalButtons button[type="submit"] {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.modalButtons button[type="submit"]:hover {
+    background-color: #1d345c;
+}
+
+.modalButtons button[type="button"] {
+    background-color: #eee;
+    color: #333;
+}
+
+.modalButtons button[type="button"]:hover {
+    background-color: #ccc;
+}
+
+/* --- Validation Error (Existing) --- */
+
+.validationError {
+    background-color: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}

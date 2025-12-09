@@ -27,7 +27,6 @@ class Request {
     // --- Request Interceptor ---
     beforeRequest(request) {
         const token = TokenService.getAccessToken();
-        console.log(token);
         if (token) {
             request.headers.Authorization = `Bearer ${token}`;
         }
@@ -43,24 +42,37 @@ class Request {
     
     // --- Response Failure Interceptor (The 401 Handler) ---
     async onRequestFailure(err) {
-        const {response} = err;
-        
-        // ⭐️ CHECK for 401 status
-        if (response && response.status === 401) {
-            console.warn("401 Unauthorized error received. Clearing session.");
+        const { response, config } = err;
 
-            // ⭐️ FIX: Remove the token and redirect to login
-            TokenService.removeAccessToken();
-            
-            // Throw the response error so calling components/thunks can catch it
-            // and update their local error states (e.g., showing a message).
+        // If no response (network error), throw it
+        if (!response) return Promise.reject(err);
+
+        // Handle 401 Unauthorized
+        if (response.status === 401) {
+
+            // Check if request URL is NOT /login
+            const isLoginEndpoint =
+                config?.url?.includes("/login") ||
+                config?.url?.endsWith("login");
+
+            if (!isLoginEndpoint) {
+                console.warn("401 received. Redirecting to login...");
+
+                // Clear token
+                TokenService.removeAccessToken();
+
+                // Redirect to login
+                window.location.href = "/login";
+            }
+
+            // Reject so calling function can handle the error
             return Promise.reject(err);
         }
-        
-        // For all other errors (400, 404, 500, etc.), just throw the error up
+
+        // Other HTTP errors
         return Promise.reject(err);
     }
-    
+
     // Removed processQueue as it's no longer needed for direct login flow.
 }
 

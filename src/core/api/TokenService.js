@@ -18,10 +18,6 @@ class TokenService {
     // Static method to remove the access token (LOGOUT)
     static removeAccessToken() {
         localStorage.removeItem(TokenService.ACCESS_TOKEN_KEY);
-        // ⭐️ Optional: Force redirect to login page immediately after removal
-        // This relies on your routing setup. If using React Router, you'd navigate.
-        // For a hard browser redirect:
-        window.location.href = '/login'; 
     }
 }
 

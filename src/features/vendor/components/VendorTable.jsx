@@ -2,6 +2,7 @@
 import React from "react";
 import styles from "./VendorTable.module.css";
 import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const formatDate = (dateString) => {
 	return dateString ? new Date(dateString).toLocaleDateString() : "-";
@@ -9,12 +10,16 @@ const formatDate = (dateString) => {
 
 // ⭐️ The component now accepts currentPage and pageSize as props
 export default React.memo(function VendorTable ({handleEdit, data, currentPage, pageSize}) {
+	// Get User Role
+	const user = useSelector((state) => state.auth.user);
+	const canEditVendor = user?.can_edit_vendor === true;
+
 	const navigate = useNavigate();
 	if (!data || data.length === 0) {
 		return <p>No vendor data available based on current filters.</p>;
 	}
-	const headers = ["No", "Name", "Address", "Email", "Phone Number", "Count Project", "Created Info", "Updated Info", "Action"];
 
+	const headers = ["No", "Name", "Address", "Email", "Phone Number", "Count Project", "Created Info", "Updated Info", "Action"];
 	// Calculate the index offset based on the current page and size
 	const startIndex = (currentPage - 1) * pageSize;
 
@@ -71,9 +76,11 @@ export default React.memo(function VendorTable ({handleEdit, data, currentPage, 
 										<button className={styles.detailButton} onClick={() => handleDetailClick(vendor.id)}>
 											Detail
 										</button>
-										<button className={styles.detailButton} onClick={() => handleEdit(vendor)}>
-											Edit
-										</button>
+										{canEditVendor && (
+											<button className={styles.detailButton} onClick={() => handleEdit(vendor)}>
+												Edit
+											</button>
+										)}
 									</div>
 								</td>
 							</tr>

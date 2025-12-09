@@ -4,8 +4,9 @@ export const getPMList = async (filters) => {
   const params = {
     project_id: filters.projectId,
     description: filters.filterDescription,
-    start_date: filters.filterStartDate,
-    end_date: filters.filterEndDate,
+    start_date: filters.filterStartDate != "" ? filters.filterStartDate : null,
+    end_date: filters.filterEndDate  != "" ? filters.filterEndDate : null,
+    pm_type: filters.filterPMType  != "" ? filters.filterPMType : null,
     page: filters.currentPage,     
     page_size: filters.pageSize,   
   };

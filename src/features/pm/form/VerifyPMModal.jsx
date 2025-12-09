@@ -8,6 +8,7 @@ const getInitialFormData = (data) => {
 
 	return {
 		id: safeData.id || "",
+		pm_project_date: safeData.pm_project_date || "",
 		pm_completion_date: safeData.pm_completion_date || "",
 		is_verified: safeData.is_verified || false, // Default to false
 		note: safeData.note || "",
@@ -22,6 +23,20 @@ const RequiredLabel = ({children, isRequired}) => (
 	</label>
 );
 
+const getTodayString = () => {
+    const today = new Date();
+    
+    // Get year, month, and day components
+    const year = today.getFullYear();
+    // Get month (0-11), add 1, and pad with a leading '0' if single digit
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    // Get day, and pad with a leading '0' if single digit
+    const day = String(today.getDate()).padStart(2, '0');
+
+    // Return the required YYYY-MM-DD format
+    return `${year}-${month}-${day}`;
+};
+
 // Removed 'id' prop from the signature as it's now derived from initialData
 export default function VerifyPMModal ({visible, onClose, onSubmit, initialData=null}) {
 	// Function to calculate the initial state based on props (memoized)
@@ -31,6 +46,7 @@ export default function VerifyPMModal ({visible, onClose, onSubmit, initialData=
 			if (data && data.id) {
 				return {
 					id: data.id,
+					pm_project_date: data.pm_project_date || "",
 					pm_completion_date: data.pm_completion_date || "",
 					is_verified: data.is_verified || "false",
 					note: data.note || "",
@@ -122,14 +138,14 @@ export default function VerifyPMModal ({visible, onClose, onSubmit, initialData=
 	return (
 		<div className={styles.modalOverlay}>
 			<div className={styles.modalContent}>
-				<h3 className="text-xl font-bold text-center">Verify Project Maintenance</h3>
+				<h3 className="text-xl font-bold text-center">Verify Project Monitoring</h3>
 
 				{validationError && <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">{validationError}</div>}
 				{/* Form tag is just a container now, submission is handled by buttons */}
 				<form className={styles.formGrid} onSubmit={(e) => e.preventDefault()}>
 					{/* PM Completion Date (Mandatory for both actions) */}
 					<RequiredLabel isRequired={true}>Completion Date</RequiredLabel>
-					<input type="date" name="pm_completion_date" value={formData.pm_completion_date} onChange={handleChange} className={styles.input} />
+					<input type="date" name="pm_completion_date" value={formData.pm_completion_date} onChange={handleChange} className={styles.input} min={formData.pm_project_date} max={getTodayString()}/>
 
 					{/* Note Field (Conditionally Required) */}
 					<RequiredLabel isRequired={false}>Note</RequiredLabel>
