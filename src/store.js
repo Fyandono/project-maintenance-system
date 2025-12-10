@@ -10,6 +10,7 @@ import pmDetailReducer from './features/pm/pmDetailSlice';
 import unitReducer from './features/unit/unitSlice';
 import roleReducer from './features/role/roleSlice';
 import rolesReducer from './features/user/roleSlice';
+import changePasswordReducer from './features/auth/changePasswordSlice';
 
 export const store = configureStore({
   reducer: {
@@ -23,5 +24,6 @@ export const store = configureStore({
     unit: unitReducer,
     role: roleReducer,
     roles: rolesReducer,
+    changePassword: changePasswordReducer
   },
 });

@@ -9,6 +9,7 @@ import UserPage from "./features/user/pages/UserPage";
 import PMDetailPage from "./features/pm/pages/PMDetailPage";
 import UnitPage from "./features/unit/pages/UnitPage";
 import RolePage from "./features/role/pages/RolePage";
+import ChangePasswordPage from "./features/auth/pages/ChangePasswordPage";
 
 export default function App () {
     const location = useLocation();
@@ -94,6 +95,16 @@ export default function App () {
                         element={
                             <ProtectedRoute>
                                 <RolePage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ROLE LIST */}
+                    <Route
+                        path="/change-password"
+                        element={
+                            <ProtectedRoute>
+                                <ChangePasswordPage />
                             </ProtectedRoute>
                         }
                     />

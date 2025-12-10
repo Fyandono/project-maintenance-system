@@ -116,7 +116,7 @@ export default function CreateEditProjectModal ({visible, onClose, onSubmit, ven
 					<input type="text" name="pic_name" value={formData.pic_name} onChange={handleChange} />
 
 					<label>PIC Email</label>
-					<input type="email" name="pic_email" value={formData.pic_email} onChange={handleChange} />
+					<input type="email" name="pic_email" value={formData.pic_email} pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" onChange={handleChange} />
 
 					<label>PIC Unit</label>
 					<select name="pic_unit_id" value={formData.pic_unit_id || ""} onChange={handleChange} disabled={isLoadingUnits}>

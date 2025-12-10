@@ -64,8 +64,6 @@ const authSlice = createSlice({
   },
 });
 
-// ⭐️ CRITICAL CHANGE: Export the action creator using a named export.
-// This allows the Axios Interceptor in vendors/api.js to import and dispatch it.
 export const { logout } = authSlice.actions;
 
 // Export the reducer as the default export

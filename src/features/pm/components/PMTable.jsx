@@ -3,7 +3,7 @@ import {apiController} from "../../../core/api/apiController";
 import {formatDate} from "../../../core/utils/formatDate";
 import {useNavigate, useParams} from "react-router-dom";
 import {FaDownload} from "react-icons/fa";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
 // ⭐️ The component now accepts currentPage and pageSize as props
 export default function PMTable ({handleEdit, handleVerifyClick, data, currentPage, pageSize}) {
@@ -12,7 +12,7 @@ export default function PMTable ({handleEdit, handleVerifyClick, data, currentPa
 	const canEditPM = user?.can_edit_pm === true;
 	const canVerifyPM = user?.can_verify_pm === true;
 
-		// Headers
+	// Headers
 	const headers = ["No", "Task", "Solution", "Type", "PIC Name", "PIC Email", "PIC Unit", "Project Date", "Completion Date", "Created Info", "Updated Info", "Verified Info", "Status", "Action"];
 
 	// Calculate the index offset based on the current page and size
@@ -129,13 +129,57 @@ export default function PMTable ({handleEdit, handleVerifyClick, data, currentPa
 
 									{/* Combined Verified Info Cell */}
 									<td>
-										<div className={styles.metaInfo}>
-											<span className={styles.metaDate}>{formatDate(pm.verified_at)}</span>
-											<span className={styles.metaUser}>{pm.verified_by || "-"}</span>
-											<span className={styles.metaUser}>{pm.note ? `Note: ${pm.note}` : null}</span>
-										</div>
-									</td>
+									{/* The original meta info for the current verification status */}
+									<div className={styles.metaInfoVerify}>
+										<span className={styles.metaDate}>{formatDate(pm.verified_at)}</span>
+										<span className={styles.metaUser}>{pm.verified_by || "-"}</span>
+									</div>
 
+									{/* --- Notes History Implementation with Parsing --- */}
+									{(() => {
+										let notesHistory = [];
+										
+										// 1. Check if pm.note exists and is a string
+										if (pm.note && typeof pm.note === 'string') {
+										try {
+											// 2. Attempt to parse the JSON string into an array
+											const parsedData = JSON.parse(pm.note);
+											
+											// 3. Ensure the result is actually an array before assigning
+											if (Array.isArray(parsedData)) {
+											notesHistory = parsedData;
+											}
+										} catch (error) {
+											console.error("Failed to parse notes history JSON:", error);
+											// If parsing fails, notesHistory remains an empty array, which is safe.
+										}
+										} else if (Array.isArray(pm.note)) {
+										// Safety net: if it's already an array (e.g., from a successful update response)
+										notesHistory = pm.note;
+										}
+
+										if (notesHistory.length === 0) {
+										return null;
+										}
+
+										// 4. Render the notes history if the array is not empty
+										return (
+										<div className={styles.notesHistoryContainer}>
+											<p className={styles.notesHeader}>Notes:</p>
+											{notesHistory.map((noteEntry, index) => (
+											<div key={index} className={styles.noteEntry}>
+												<p className={styles.noteText}>
+												{noteEntry.note || "No details provided."}
+												</p>
+												<span className={styles.noteMeta}>
+												{noteEntry.user || "System"} on {formatDate(noteEntry.timestamp)}
+												</span>
+											</div>
+											))}
+										</div>
+										);
+									})()}
+									</td>
 									<td className={styles.statusCell}>
 										{pm.is_verified === true ? (
 											<div className={styles.verified}>
@@ -143,7 +187,7 @@ export default function PMTable ({handleEdit, handleVerifyClick, data, currentPa
 											</div>
 										) : pm.is_verified === false ? (
 											<div className={styles.rejected}>
-												<span className={styles.icon}>❌</span> Rejected
+												<span className={styles.icon}>❌</span> Need Revise
 											</div>
 										) : (
 											<div className={styles.unverified}>

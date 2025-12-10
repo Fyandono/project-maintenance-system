@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {FaUser, FaChevronDown, FaSignOutAlt} from "react-icons/fa";
+import {FaUser, FaChevronDown, FaSignOutAlt, FaLock} from "react-icons/fa";
 
 import styles from "./Navbar.module.css";
 import { logout } from "../../features/auth/authSlice";
@@ -28,6 +28,10 @@ const Navbar = () => {
 		document.addEventListener("click", handleClickOutside);
 		return () => document.removeEventListener("click", handleClickOutside);
 	}, []);
+
+	const handleChangePassword = () => {
+		navigate("/change-password");     
+	};
 
 	const handleLogout = () => {
 		dispatch(logout());        
@@ -78,6 +82,10 @@ const Navbar = () => {
 
 							{isDropdownOpen && (
 								<div className={styles.dropdownMenu}>
+									<button className={styles.dropdownItem} onClick={handleChangePassword}>
+										<FaLock className={styles.dropdownIcon} />
+										Change Password
+									</button>
 									<button className={styles.dropdownItem} onClick={handleLogout}>
 										<FaSignOutAlt className={styles.dropdownIcon} />
 										Logout

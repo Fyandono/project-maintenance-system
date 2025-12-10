@@ -10,8 +10,8 @@ const getInitialFormData = (data) => {
 		id: safeData.id || "",
 		pm_project_date: safeData.pm_project_date || "",
 		pm_completion_date: safeData.pm_completion_date || "",
-		is_verified: safeData.is_verified || false, // Default to false
-		note: safeData.note || "",
+		is_verified: safeData.is_verified || false,
+		note: "",
 	};
 };
 
@@ -49,7 +49,7 @@ export default function VerifyPMModal ({visible, onClose, onSubmit, initialData=
 					pm_project_date: data.pm_project_date || "",
 					pm_completion_date: data.pm_completion_date || "",
 					is_verified: data.is_verified || "false",
-					note: data.note || "",
+					note: "",
 				};
 			}
 			// Otherwise, use default initial state

@@ -24,7 +24,7 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 
 	// Function to calculate the initial state based on props
 	const calculateInitialFormState = (data) => {
-        console.log(data);
+		console.log(data);
 		if (data && data.id) {
 			// Mapping initial data for editing
 			return {
@@ -68,18 +68,18 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 
 	// Re-calculate and set form data whenever initialData changes (for opening/closing/switching)
 	useEffect(() => {
-        if (visible) {
+		if (visible) {
 			if (initialData) {
 				setFormData({
 					id: initialData.id || "",
 					project_id: initialProjectId || "",
 					pm_description: initialData.pm_description || "",
-                    pm_solution: initialData.pm_solution || "",
+					pm_solution: initialData.pm_solution || "",
 					pic_name: initialData.pic_name || "",
 					pic_email: initialData.pic_email || "",
 					pic_unit_id: initialData.pic_unit_id || null,
 					pm_type: initialData.pm_type || "",
-                    pm_project_date: initialData.pm_project_date || ""
+					pm_project_date: initialData.pm_project_date || "",
 				});
 			}
 			else {
@@ -172,12 +172,7 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 					{/* File Upload: Required for create, optional for edit (only needed if changing) */}
 					<RequiredLabel>File Upload</RequiredLabel>
 					<div>
-						<input
-							type="file"
-							name="pm_file"
-							onChange={handleChange} 
-                            required
-						/>
+						<input type="file" name="pm_file" onChange={handleChange} required />
 						{/* Display existing file info if editing and no new file selected */}
 						{isEditMode && !pmFile && initialData?.file_name && <p style={{fontSize: "0.8rem", color: "#666"}}>Current file: {initialData.file_name}</p>}
 					</div>
@@ -190,7 +185,7 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 					<input type="text" name="pic_name" value={formData.pic_name} onChange={handleChange} />
 
 					<label>PIC Email</label>
-					<input type="email" name="pic_email" value={formData.pic_email} onChange={handleChange} />
+					<input type="email" name="pic_email" value={formData.pic_email} onChange={handleChange} pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" />
 
 					<label>PIC Unit</label>
 					<select name="pic_unit_id" value={formData.pic_unit_id || ""} onChange={handleChange} disabled={isLoadingUnits}>

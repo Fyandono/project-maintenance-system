@@ -73,10 +73,10 @@ export default function CreateEditVendorModal ({visible, onClose, onSubmit, init
 					<textarea name="address" value={formData.address} onChange={handleChange} required />
 
 					<RequiredLabel>Email</RequiredLabel>
-					<input type="email" name="email" value={formData.email} onChange={handleChange} />
+					<input type="email" name="email" value={formData.email} pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$" onChange={handleChange} required/>
 
 					<RequiredLabel>Phone Number</RequiredLabel>
-					<input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
+					<input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} required/>
 
 					<div className={styles.modalButtons}>
 						<button type="button" onClick={handleCancel}>
