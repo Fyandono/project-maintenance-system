@@ -16,9 +16,6 @@ export default React.memo(function VendorTable ({handleEdit, data, currentPage, 
 	const canEditVendor = user?.can_edit_vendor === true;
 
 	const navigate = useNavigate();
-	if (!data || data.length === 0) {
-		return <p>No vendor data available based on current filters.</p>;
-	}
 
 	const headers = ["No", "Name", "Address", "Email", "Phone Number", "Count Project", "Created Info", "Updated Info", "Action"];
 	// Calculate the index offset based on the current page and size
@@ -45,48 +42,57 @@ export default React.memo(function VendorTable ({handleEdit, data, currentPage, 
 						</tr>
 					</thead>
 					<tbody>
-						{data.map((vendor, index) => (
-							<tr key={vendor.id}>
-								{/* ⭐️ CONTINUOUS ROW NUMBER CALCULATION: startIndex + index + 1 */}
-								<td className={styles.rowNumberCell}>{startIndex + index + 1}</td>
-								<td className={styles.nameCell}>{vendor.name || "-"}</td>
-								<td>{vendor.address || "-"}</td>
-								<td>{vendor.email || "-"}</td>
-								<td>{vendor.phone_number || "-"}</td>
-								<td>{vendor.count_project || "0"}</td>
-
-								{/* Combined Created Info Cell */}
-								<td>
-									<div className={styles.metaInfo}>
-										<span className={styles.metaDate}>{formatDate(vendor.created_at)}</span>
-										<span className={styles.metaUser}>{vendor.created_by || "-"}</span>
-									</div>
-								</td>
-
-								{/* Combined Updated Info Cell */}
-								<td>
-									<div className={styles.metaInfo}>
-										<span className={styles.metaDate}>{formatDate(vendor.updated_at)}</span>
-										<span className={styles.metaUser}>{vendor.updated_by || "-"}</span>
-									</div>
-								</td>
-
-								{/* Action Button */}
-								<td className={styles.actionCell}>
-									<div className={styles.actionRow}>
-										{canViewProject && (
-										<button className={styles.detailButton} onClick={() => handleDetailClick(vendor.id)}>
-											Detail
-										</button>)}
-										{canEditVendor && (
-											<button className={styles.detailButton} onClick={() => handleEdit(vendor)}>
-												Edit
-											</button>
-										)}
-									</div>
+						{!data || data.length === 0 ? (
+							<tr>
+								<td colSpan={headers.length} className={styles.noDataRow} style={{textAlign: "center"}}>
+									No Data Available
 								</td>
 							</tr>
-						))}
+						) : (
+							data.map((vendor, index) => (
+								<tr key={vendor.id}>
+									{/* ⭐️ CONTINUOUS ROW NUMBER CALCULATION: startIndex + index + 1 */}
+									<td className={styles.rowNumberCell}>{startIndex + index + 1}</td>
+									<td className={styles.nameCell}>{vendor.name || "-"}</td>
+									<td>{vendor.address || "-"}</td>
+									<td>{vendor.email || "-"}</td>
+									<td>{vendor.phone_number || "-"}</td>
+									<td>{vendor.count_project || "0"}</td>
+
+									{/* Combined Created Info Cell */}
+									<td>
+										<div className={styles.metaInfo}>
+											<span className={styles.metaDate}>{formatDate(vendor.created_at)}</span>
+											<span className={styles.metaUser}>{vendor.created_by || "-"}</span>
+										</div>
+									</td>
+
+									{/* Combined Updated Info Cell */}
+									<td>
+										<div className={styles.metaInfo}>
+											<span className={styles.metaDate}>{formatDate(vendor.updated_at)}</span>
+											<span className={styles.metaUser}>{vendor.updated_by || "-"}</span>
+										</div>
+									</td>
+
+									{/* Action Button */}
+									<td className={styles.actionCell}>
+										<div className={styles.actionRow}>
+											{canViewProject && (
+												<button className={styles.detailButton} onClick={() => handleDetailClick(vendor.id)}>
+													Detail
+												</button>
+											)}
+											{canEditVendor && (
+												<button className={styles.detailButton} onClick={() => handleEdit(vendor)}>
+													Edit
+												</button>
+											)}
+										</div>
+									</td>
+								</tr>
+							))
+						)}
 					</tbody>
 				</table>
 			</div>
