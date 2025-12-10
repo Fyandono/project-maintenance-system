@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 export default function ProjectTable ({handleEdit, vendorId, data, currentPage, pageSize}) {
 	// Get User Role
 	const user = useSelector((state) => state.auth.user);
+	const canViewPM = user?.can_get_pm === true;
 	const canEditProject = user?.can_edit_project === true;
 
 	const headers = ["No", "Name", "Project Type", "PIC Name", "PIC Email", "PIC Unit", "PM Uploaded", "PM Unverified", "PM Verified", "Created Info", "Updated Info", "Action"];
@@ -77,9 +78,10 @@ export default function ProjectTable ({handleEdit, vendorId, data, currentPage, 
 									{/* Action Button */}
 									<td className={styles.actionCell}>
 										<div className={styles.actionRow}>
+											{canViewPM && (
 											<button className={styles.detailButton} onClick={() => handleDetailClick(project.id)}>
 												Detail
-											</button>
+											</button>)}
 											{canEditProject && (
 												<button className={styles.detailButton} onClick={() => handleEdit(project)}>
 													Edit

@@ -320,7 +320,8 @@ const PMDetailPage = () => {
 								Edit
 							</button>
 						)}
-						{!isVerified && canVerifyPM && (
+						{!isVerified && canVerifyPM && // Check if project_date exists and is <= today
+							pm.pm_project_date && new Date(pm.pm_project_date) <= new Date() &&(
 							<button className={styles.detailButton} onClick={() => handleVerifyClick()}>
 								Verify
 							</button>

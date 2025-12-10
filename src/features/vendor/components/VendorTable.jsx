@@ -12,6 +12,7 @@ const formatDate = (dateString) => {
 export default React.memo(function VendorTable ({handleEdit, data, currentPage, pageSize}) {
 	// Get User Role
 	const user = useSelector((state) => state.auth.user);
+	const canViewProject = user?.can_get_project === true;
 	const canEditVendor = user?.can_edit_vendor === true;
 
 	const navigate = useNavigate();
@@ -73,9 +74,10 @@ export default React.memo(function VendorTable ({handleEdit, data, currentPage, 
 								{/* Action Button */}
 								<td className={styles.actionCell}>
 									<div className={styles.actionRow}>
+										{canViewProject && (
 										<button className={styles.detailButton} onClick={() => handleDetailClick(vendor.id)}>
 											Detail
-										</button>
+										</button>)}
 										{canEditVendor && (
 											<button className={styles.detailButton} onClick={() => handleEdit(vendor)}>
 												Edit

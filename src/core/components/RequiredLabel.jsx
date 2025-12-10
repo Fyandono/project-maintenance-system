@@ -1,4 +1,4 @@
-const RequiredLabel = ({ isRequired, children }) => (
+const RequiredLabel = ({ isRequired=true, children }) => (
   <label>
     {children}
     {isRequired && <span style={{ color: "red", marginLeft: "4px" }}>*</span>}

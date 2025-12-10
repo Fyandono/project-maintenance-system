@@ -1,5 +1,5 @@
 const config = {
-    apiServerBaseUrl: 'http://10.70.66.19:8080/', 
+    apiServerBaseUrl: 'http://10.70.200.43:8080/', 
 };
 
 export default config;

@@ -12,6 +12,12 @@ const Navbar = () => {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
+	
+	// Get user permissions (use can_get_* or can_view_* based on your backend)
+	const canViewVendor = user?.can_get_vendor === true;
+	const canViewUser = user?.can_get_user === true;
+	const canViewUnit = user?.can_get_unit === true;
+	const canViewRole = user?.can_get_role === true;
 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const dropdownRef = useRef(null);
@@ -43,12 +49,19 @@ const Navbar = () => {
 		return location.pathname.startsWith(path);
 	};
 
-	const navLinks = [
-		{name: "Vendors", path: "/vendor"},
-		{name: "Master User", path: "/user"},
-		{name: "Master Unit", path: "/unit"},
-		{name: "Master Role", path: "/role"},
+	// Define all possible nav links with their required permissions
+	const allNavLinks = [
+		{name: "Vendors", path: "/vendor", requiredPermission: canViewVendor},
+		{name: "Master User", path: "/user", requiredPermission: canViewUser},
+		{name: "Master Unit", path: "/unit", requiredPermission: canViewUnit},
+		{name: "Master Role", path: "/role", requiredPermission: canViewRole},
 	];
+
+	// Filter nav links based on user permissions
+	const navLinks = allNavLinks.filter(link => link.requiredPermission);
+
+	// If user has no permissions, show nothing or a message
+	const hasNoPermissions = navLinks.length === 0;
 
 	return (
 		<nav className={styles.noPrint}>
@@ -56,20 +69,26 @@ const Navbar = () => {
 				<div className={styles.navbarLeft}>
 					<span className={styles.logo}>Project Monitoring System</span>
 
-					<div className={styles.navLinks}>
-						{navLinks.map((link) => {
-							const isActive = isPathActive(link.path);
-							return (
-								<a
-									key={link.path}
-									href={link.path}
-									className={`${styles.navLink} ${isActive ? styles.activeLink : ""}`}
-								>
-									{link.name}
-								</a>
-							);
-						})}
-					</div>
+					{hasNoPermissions ? (
+						<div className={styles.noPermissionMessage}>
+							No navigation permissions
+						</div>
+					) : (
+						<div className={styles.navLinks}>
+							{navLinks.map((link) => {
+								const isActive = isPathActive(link.path);
+								return (
+									<a
+										key={link.path}
+										href={link.path}
+										className={`${styles.navLink} ${isActive ? styles.activeLink : ""}`}
+									>
+										{link.name}
+									</a>
+								);
+							})}
+						</div>
+					)}
 				</div>
 
 				{/* Right Side Username */}

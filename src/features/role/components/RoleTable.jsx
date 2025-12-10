@@ -6,7 +6,7 @@ import {useSelector} from "react-redux";
 // Helper function to count active permissions
 const countActivePermissions = (role) => {
 	let count = 0;
-	const permissionKeys = ["can_add_role", "can_edit_role", "can_add_user", "can_edit_user", "can_add_vendor", "can_edit_vendor", "can_add_project", "can_edit_project", "can_add_pm", "can_edit_pm", "can_verify_pm", "can_add_unit", "can_edit_unit"];
+	const permissionKeys = ["can_add_role", "can_edit_role", "can_add_user", "can_edit_user", "can_add_vendor", "can_edit_vendor", "can_add_project", "can_edit_project", "can_add_pm", "can_edit_pm", "can_verify_pm", "can_add_unit", "can_edit_unit", "can_get_vendor", "can_get_role", "can_get_unit", "can_get_user", "can_get_project", "can_get_pm"];
 
 	permissionKeys.forEach((key) => {
 		if (role[key] === true) {

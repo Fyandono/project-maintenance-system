@@ -1,8 +1,9 @@
-import {Routes, Route, useLocation} from "react-router-dom"; 
+// App.js
+import {Routes, Route, useLocation} from "react-router-dom";
 import LoginPage from "./features/auth/pages/LoginPage";
 import VendorPage from "./features/vendor/pages/VendorPage";
 import ProjectPage from "./features/project/pages/ProjectPage";
-import ProtectedRoute from "./core/components/ProtectedRoute";
+import PermissionProtectedRoute from "./core/components/PermissionProtectedRoute";
 import PMPage from "./features/pm/pages/PMPage";
 import Navbar from "./core/components/NavBar";
 import UserPage from "./features/user/pages/UserPage";
@@ -10,108 +11,98 @@ import PMDetailPage from "./features/pm/pages/PMDetailPage";
 import UnitPage from "./features/unit/pages/UnitPage";
 import RolePage from "./features/role/pages/RolePage";
 import ChangePasswordPage from "./features/auth/pages/ChangePasswordPage";
+import UnauthorizedPage from "./features/unauthorized/UnauthorizedPage";
 
 export default function App () {
-    const location = useLocation();
-    // Check if the current route is the login page or the root path
-    const isLoginPage = location.pathname === '/' || location.pathname === '/login';
+	const location = useLocation();
+	const isLoginPage = location.pathname === "/" || location.pathname === "/login";
 
-    return (
-        <div>
-            {/* 1. Conditionally render the Navbar. It is hidden on the login page. */}
-            {!isLoginPage && <Navbar />} 
-            
-            {/* 2. Use a conditional class for the layout wrapper (optional, but good practice) */}
-            <div className={isLoginPage ? "Auth-Layout" : "App-Layout"}> 
-                <Routes>
-                    {/* Routes that DON'T need the Navbar (Login/Root) */}
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/login" element={<LoginPage />} />
+	return (
+		<div>
+			{!isLoginPage && <Navbar />}
+			<div className={isLoginPage ? "Auth-Layout" : "App-Layout"}>
+				<Routes>
+					{/* Public routes */}
+					<Route path="/" element={<LoginPage />} />
+					<Route path="/login" element={<LoginPage />} />
+					<Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-                    {/* VENDOR LIST */}
-                    <Route
-                        path="/vendor"
-                        element={
-                            <ProtectedRoute>
-                                <VendorPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					{/* Protected routes with permission checking */}
+					<Route
+						path="/vendor"
+						element={
+							<PermissionProtectedRoute>
+								<VendorPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    {/* PROJECT LIST BY VENDOR */}
-                    <Route
-                        path="/vendor/:vendorId"
-                        element={
-                            <ProtectedRoute>
-                                <ProjectPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/vendor/:vendorId"
+						element={
+							<PermissionProtectedRoute>
+								<ProjectPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    {/* Project Monitoring */}
-                    <Route
-                        path="/vendor/:vendorId/project/:projectId"
-                        element={
-                            <ProtectedRoute>
-                                <PMPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/vendor/:vendorId/project/:projectId"
+						element={
+							<PermissionProtectedRoute>
+								<PMPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                     {/* Project Monitoring */}
-                    <Route
-                        path="/vendor/:vendorId/project/:projectId/pm/:pmId"
-                        element={
-                            <ProtectedRoute>
-                                <PMDetailPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/vendor/:vendorId/project/:projectId/pm/:pmId"
+						element={
+							<PermissionProtectedRoute>
+								<PMDetailPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    {/* USER LIST */}
-                    <Route
-                        path="/user"
-                        element={
-                            <ProtectedRoute>
-                                <UserPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/user"
+						element={
+							<PermissionProtectedRoute>
+								<UserPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    
-                    {/* UNIT LIST */}
-                    <Route
-                        path="/unit"
-                        element={
-                            <ProtectedRoute>
-                                <UnitPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/unit"
+						element={
+							<PermissionProtectedRoute>
+								<UnitPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    {/* ROLE LIST */}
-                    <Route
-                        path="/role"
-                        element={
-                            <ProtectedRoute>
-                                <RolePage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/role"
+						element={
+							<PermissionProtectedRoute>
+								<RolePage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    {/* ROLE LIST */}
-                    <Route
-                        path="/change-password"
-                        element={
-                            <ProtectedRoute>
-                                <ChangePasswordPage />
-                            </ProtectedRoute>
-                        }
-                    />
+					<Route
+						path="/change-password"
+						element={
+							<PermissionProtectedRoute>
+								<ChangePasswordPage />
+							</PermissionProtectedRoute>
+						}
+					/>
 
-                    <Route path="*" element={<h1>404 Not Found</h1>} />
-                </Routes>
-            </div>
-        </div>
-    );
+					<Route path="*" element={<h1>404 Not Found</h1>} />
+				</Routes>
+			</div>
+		</div>
+	);
 }

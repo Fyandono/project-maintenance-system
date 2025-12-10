@@ -8,20 +8,29 @@ const getInitialFormData = () => ({
 	name: "",
 	is_active: true,
 	// --- Permission Fields ---
+	// Get permissions
+	can_get_role: false,
+	can_get_user: false,
+	can_get_vendor: false,
+	can_get_project: false,
+	can_get_pm: false,
+	can_get_unit: false,
+	// Add permissions
 	can_add_role: false,
-	can_edit_role: false,
 	can_add_user: false,
-	can_edit_user: false,
 	can_add_vendor: false,
-	can_edit_vendor: false,
 	can_add_project: false,
-	can_edit_project: false,
 	can_add_pm: false,
-	can_edit_pm: false,
-	can_verify_pm: false,
-	// ⭐️ NEW FIELDS ADDED HERE
 	can_add_unit: false,
+	// Edit permissions
+	can_edit_role: false,
+	can_edit_user: false,
+	can_edit_vendor: false,
+	can_edit_project: false,
+	can_edit_pm: false,
 	can_edit_unit: false,
+	// Verify permission
+	can_verify_pm: false,
 });
 
 export default function CreateEditRoleModal ({visible, onClose, onSubmit, initialData=null}) {
@@ -40,7 +49,7 @@ export default function CreateEditRoleModal ({visible, onClose, onSubmit, initia
 				// Map all initial data properties to the form state
 				setFormData({
 					...getInitialFormData(), // Start with defaults to ensure all fields are present
-					...initialData,         // Override with initial data
+					...initialData,         // Override with initial data
 					is_active: initialData.is_active !== undefined ? initialData.is_active : true, 
 				});
 			}
@@ -71,20 +80,29 @@ export default function CreateEditRoleModal ({visible, onClose, onSubmit, initia
 			id: formData.id,
 			name: formData.name,
 			is_active: formData.is_active,
+			// Get permissions
+			can_get_role: formData.can_get_role,
+			can_get_user: formData.can_get_user,
+			can_get_vendor: formData.can_get_vendor,
+			can_get_project: formData.can_get_project,
+			can_get_pm: formData.can_get_pm,
+			can_get_unit: formData.can_get_unit,
+			// Add permissions
 			can_add_role: formData.can_add_role,
-			can_edit_role: formData.can_edit_role,
 			can_add_user: formData.can_add_user,
-			can_edit_user: formData.can_edit_user,
 			can_add_vendor: formData.can_add_vendor,
-			can_edit_vendor: formData.can_edit_vendor,
 			can_add_project: formData.can_add_project,
-			can_edit_project: formData.can_edit_project,
 			can_add_pm: formData.can_add_pm,
-			can_edit_pm: formData.can_edit_pm,
-			can_verify_pm: formData.can_verify_pm,
-			// ⭐️ NEW FIELDS ADDED TO PAYLOAD
 			can_add_unit: formData.can_add_unit,
+			// Edit permissions
+			can_edit_role: formData.can_edit_role,
+			can_edit_user: formData.can_edit_user,
+			can_edit_vendor: formData.can_edit_vendor,
+			can_edit_project: formData.can_edit_project,
+			can_edit_pm: formData.can_edit_pm,
 			can_edit_unit: formData.can_edit_unit,
+			// Verify permission
+			can_verify_pm: formData.can_verify_pm,
 		};
 
 		onSubmit(payloadToSubmit);
@@ -99,30 +117,47 @@ export default function CreateEditRoleModal ({visible, onClose, onSubmit, initia
 
 	if (!visible) return null;
 
-	// Helper component for permission checkbox pairs
-	const PermissionPair = ({ title, addName, editName }) => (
+	// Updated helper component for permission checkbox triplets (Get, Add, Edit)
+	const PermissionTriplet = ({ title, getPermission, addPermission, editPermission }) => (
 		<div className={styles.permissionBox}>
 			<p className={styles.permissionTitle}>{title} Permissions</p>
+			
+			{/* Get Permission */}
 			<div className={styles.permissionRow}>
-				<label htmlFor={addName} className={styles.permissionLabel}>Can Add</label>
+				<label htmlFor={getPermission} className={styles.permissionLabel}>Can View</label>
 				<input 
 					type="checkbox" 
-					name={addName} 
-					checked={formData[addName]} 
+					name={getPermission} 
+					checked={formData[getPermission]} 
 					onChange={handleChange} 
 					className={styles.checkbox} 
-					id={addName} 
+					id={getPermission} 
 				/>
 			</div>
+			
+			{/* Add Permission */}
 			<div className={styles.permissionRow}>
-				<label htmlFor={editName} className={styles.permissionLabel}>Can Edit</label>
+				<label htmlFor={addPermission} className={styles.permissionLabel}>Can Add</label>
 				<input 
 					type="checkbox" 
-					name={editName} 
-					checked={formData[editName]} 
+					name={addPermission} 
+					checked={formData[addPermission]} 
 					onChange={handleChange} 
 					className={styles.checkbox} 
-					id={editName} 
+					id={addPermission} 
+				/>
+			</div>
+			
+			{/* Edit Permission */}
+			<div className={styles.permissionRow}>
+				<label htmlFor={editPermission} className={styles.permissionLabel}>Can Edit</label>
+				<input 
+					type="checkbox" 
+					name={editPermission} 
+					checked={formData[editPermission]} 
+					onChange={handleChange} 
+					className={styles.checkbox} 
+					id={editPermission} 
 				/>
 			</div>
 		</div>
@@ -169,15 +204,44 @@ export default function CreateEditRoleModal ({visible, onClose, onSubmit, initia
 					{/* --- Permission Grid --- */}
 					<p className={styles.permissionsHeader}>Permissions</p>
 					<div className={styles.permissionsGrid}>
-						<PermissionPair title="Roles" addName="can_add_role" editName="can_edit_role" />
-						<PermissionPair title="Users" addName="can_add_user" editName="can_edit_user" />
-						{/* ⭐️ NEW PERMISSION PAIR ADDED HERE */}
-						<PermissionPair title="Units" addName="can_add_unit" editName="can_edit_unit" />
-						<PermissionPair title="Vendors" addName="can_add_vendor" editName="can_edit_vendor" />
-						<PermissionPair title="Projects" addName="can_add_project" editName="can_edit_project" />
-						<PermissionPair title="PMs" addName="can_add_pm" editName="can_edit_pm" />
+						<PermissionTriplet 
+							title="Roles" 
+							getPermission="can_get_role" 
+							addPermission="can_add_role" 
+							editPermission="can_edit_role" 
+						/>
+						<PermissionTriplet 
+							title="Users" 
+							getPermission="can_get_user" 
+							addPermission="can_add_user" 
+							editPermission="can_edit_user" 
+						/>
+						<PermissionTriplet 
+							title="Units" 
+							getPermission="can_get_unit" 
+							addPermission="can_add_unit" 
+							editPermission="can_edit_unit" 
+						/>
+						<PermissionTriplet 
+							title="Vendors" 
+							getPermission="can_get_vendor" 
+							addPermission="can_add_vendor" 
+							editPermission="can_edit_vendor" 
+						/>
+						<PermissionTriplet 
+							title="Projects" 
+							getPermission="can_get_project" 
+							addPermission="can_add_project" 
+							editPermission="can_edit_project" 
+						/>
+						<PermissionTriplet 
+							title="PMs" 
+							getPermission="can_get_pm" 
+							addPermission="can_add_pm" 
+							editPermission="can_edit_pm" 
+						/>
 						
-						{/* Single PM Verification Permission */}
+						{/* PM Verification Permission */}
 						<div className={styles.permissionBox}>
 							<p className={styles.permissionTitle}>PM Verification</p>
 							<div className={styles.permissionRow}>
