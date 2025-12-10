@@ -45,7 +45,7 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 
 	const [formData, setFormData] = useState(() => calculateInitialFormState(initialData));
 	const [pmFile, setPmFile] = useState(null);
-	const pmType = ["Data", "Change Request", "Incident", "Bugs Fixing", "New Project"];
+	const pmType = ["Data", "Change Request", "Incident", "Bugs Fixing", "New Project", "Maintenance", "Other"];
 
 	const dispatch = useDispatch();
 	const units = useSelector((state) => state.units.units);
