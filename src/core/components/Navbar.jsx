@@ -52,8 +52,8 @@ const Navbar = () => {
 	// Define all possible nav links with their required permissions
 	const allNavLinks = [
 		{name: "Vendors", path: "/vendor", requiredPermission: canViewVendor},
-		{name: "Master User", path: "/user", requiredPermission: canViewUser},
 		{name: "Master Unit", path: "/unit", requiredPermission: canViewUnit},
+		{name: "Master User", path: "/user", requiredPermission: canViewUser},
 		{name: "Master Role", path: "/role", requiredPermission: canViewRole},
 	];
 
