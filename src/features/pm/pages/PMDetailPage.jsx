@@ -254,7 +254,7 @@ const PMDetailPage = () => {
 							)}
 							{isWaiting && (
 								<div className={styles.unverified}>
-									<span className={styles.icon}>🕐</span> Waiting
+									<span className={styles.icon}>🕐</span> On Progress
 								</div>
 							)}
 						</div>

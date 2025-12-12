@@ -7,6 +7,7 @@ export const getPMList = async (filters) => {
     start_date: filters.filterStartDate != "" ? filters.filterStartDate : null,
     end_date: filters.filterEndDate  != "" ? filters.filterEndDate : null,
     pm_type: filters.filterPMType  != "" ? filters.filterPMType : null,
+    pm_status: filters.filterPMStatus != "" ? filters.filterPMStatus : null,
     page: filters.currentPage,     
     page_size: filters.pageSize,   
   };

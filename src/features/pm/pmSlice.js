@@ -1,7 +1,18 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import {getPMList, postPM, editPM, verifyPM} from "../pm/api";
 
-const initialState = {extraData: null, pms: [], totalPage: 1, currentPage: 1, pageSize: 10, filterProjectId: null, isLoading: false, error: null, isCreating: false, createError: null, isVerifying: false, verifyError: null};
+const initialState = {extraData: null, 
+    pms: [], 
+    totalPage: 1, 
+    currentPage: 1, 
+    pageSize: 10,
+    filterProjectId: null, 
+    isLoading: false,
+    error: null, 
+    isCreating: false, 
+    createError: null, 
+    isVerifying: false, 
+    verifyError: null};
 
 export const fetchPMSThunk = createAsyncThunk("pms/fetchPms", async (filters, {rejectWithValue: rejectWithValue}) => {
     try {
@@ -57,13 +68,17 @@ const pmSlice = createSlice({
             }
         },
         resetFilters: (state) => {
+            state.filterProjectId = initialState.filterProjectId;
             state.currentPage = initialState.currentPage;
             state.pageSize = initialState.pageSize;
         },
         clearPmState: (state) => {
+            state.filterProjectId = null;
             state.filterDescription = null;
             state.filterStartDate = null;
             state.filterEndDate = null;
+            state.filterPMType = null;
+            state.filterPMStatus = null;
             state.pms = [];
             state.totalPage = 1;
             state.currentPage = 1;

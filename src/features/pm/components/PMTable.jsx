@@ -189,7 +189,7 @@ export default function PMTable ({handleEdit, handleVerifyClick, data, currentPa
 											</div>
 										) : (
 											<div className={styles.unverified}>
-												<span className={styles.icon}>🕐</span> Waiting
+												<span className={styles.icon}>🕐</span> On Progress
 											</div>
 										)}
 									</td>

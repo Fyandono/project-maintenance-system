@@ -16,6 +16,20 @@ const getInitialFormData = (initialProjectId) => ({
 	// 'id' is intentionally omitted here as it's only present in edit mode
 });
 
+const getTodayString = () => {
+    const today = new Date();
+    
+    // Get year, month, and day components
+    const year = today.getFullYear();
+    // Get month (0-11), add 1, and pad with a leading '0' if single digit
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    // Get day, and pad with a leading '0' if single digit
+    const day = String(today.getDate()).padStart(2, '0');
+
+    // Return the required YYYY-MM-DD format
+    return `${year}-${month}-${day}`;
+};
+
 export default function CreateEditPMModal ({visible, onClose, onSubmit, projectName, initialProjectId, initialData=null}) {
 	// Determine if we are in Edit mode
 	const isEditMode = !!initialData;
@@ -178,7 +192,7 @@ export default function CreateEditPMModal ({visible, onClose, onSubmit, projectN
 					</div>
 
 					<RequiredLabel>Project Date</RequiredLabel>
-					<input type="date" name="pm_project_date" value={formData.pm_project_date} onChange={handleChange} required />
+					<input type="date" name="pm_project_date" value={formData.pm_project_date} onChange={handleChange} max={getTodayString()} required />
 
 					{/* Optional PIC Fields */}
 					<label>PIC Name</label>

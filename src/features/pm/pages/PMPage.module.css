@@ -56,9 +56,50 @@
     text-shadow: none; 
 }
 
-/* 4. Reset Floating Label Specifics */
-/* Remove all :focus + label and :not([value=""]) + label rules */
+.inputGroupNotSearch {
+    /* 1. Stack children vertically */
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; /* Aligns contents (label & input) to the left */
+    
+    /* Ensure the search bar takes more space */
+    flex: 1; /* Allows the search bar to expand */
+    
+    /* Remove absolute positioning context */
+    position: static; 
+    height: auto; /* Allow height to adjust */
+    min-width: 150px; 
+}
 
+/* 2. Style the Label */
+.inputGroupNotSearch label {
+    /* Position is static/relative, not absolute */
+    position: static; 
+    
+    /* Simple styling for the label text */
+    margin-bottom: 4px; /* Space between label and input */
+    
+    /* Reset all floating label overrides */
+    transform: none; 
+    pointer-events: auto;
+    background: transparent;
+    transition: none;
+}
+
+/* 3. Input/Select Base Styles (Standard) */
+.inputGroupNotSearch input,
+.inputGroupNotSearch select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 10px;
+    box-sizing: border-box; 
+    
+    /* Revert text visibility hacks */
+    color: inherit; 
+    text-shadow: none; 
+}
 
 /* --- EXISTING STYLES (Keep the rest of your provided CSS) --- */
 

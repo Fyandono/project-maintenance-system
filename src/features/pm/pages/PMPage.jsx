@@ -17,6 +17,7 @@ import Pagination from "../../../core/components/Pagination";
 
 // Data for the new dropdown filter
 const pmTypeOptions = ["Data", "Change Request", "Incident", "Bugs Fixing", "New Project"];
+const pmStatusOptions = ["On Progress", "Need Revise", "Verified"];
 
 export default function PMPage () {
 	// ⭐️ 1. Read the projectId from the URL (e.g., /pms/123)
@@ -44,8 +45,8 @@ export default function PMPage () {
 		filterProjectId: globalProjectId,
 		filterStartDate: globalFilterStartDate,
 		filterEndDate: globalFilterEndDate,
-		// ⭐️ NEW: Select the PM Type filter
 		filterPMType: globalFilterPMType,
+		filterPMStatus: globalFilterPMStatus,
 	} = useSelector((state) => state.pms);
 
 	const [localSearchTerm, setLocalSearchTerm] = useState(globalFilterDescription);
@@ -84,8 +85,9 @@ export default function PMPage () {
 			filterStartDate: globalFilterStartDate,
 			filterEndDate: globalFilterEndDate,
 			filterPMType: globalFilterPMType,
+			filterPMStatus: globalFilterPMStatus,
 		}),
-		[currentPage, pageSize, globalProjectId, globalFilterDescription, globalFilterStartDate, globalFilterEndDate, globalFilterPMType],
+		[currentPage, pageSize, globalProjectId, globalFilterDescription, globalFilterStartDate, globalFilterEndDate, globalFilterPMType, globalFilterPMStatus],
 	);
 
 	// EFFECT 3: Fetch pms whenever filters (including the stable projectId) change
@@ -105,9 +107,12 @@ export default function PMPage () {
 	const handleSearchChange = (e) => setLocalSearchTerm(e.target.value);
 	const handlePageChange = (page) => dispatch(setFilter({name: "currentPage", value: page}));
 
-	// ⭐️ NEW HANDLER: Handle change in PM Type dropdown
 	const handleTypeChange = (e) => {
 		dispatch(setFilter({name: "filterPMType", value: e.target.value}));
+	};
+
+	const handleStatusChange = (e) => {
+		dispatch(setFilter({name: "filterPMStatus", value: e.target.value}));
 	};
 
 	const handleDateRangeChange = (dates) => {
@@ -204,10 +209,10 @@ export default function PMPage () {
 					<input key="project-search-input" type="text" placeholder="Search item" value={localSearchTerm} onChange={handleSearchChange} />
 				</div>
 
-				<div className={styles.inputGroup}>
+				<div className={styles.inputGroupNotSearch}>
 					<label for="pm-type-filter">Type</label>
 					<select key="pm-type-filter" className={styles.selectInput} value={globalFilterPMType || ""} onChange={handleTypeChange}>
-						<option value="">All Types</option>
+						<option value="">All</option>
 						{pmTypeOptions.map((type) => (
 							<option key={type} value={type}>
 								{type}
@@ -215,6 +220,19 @@ export default function PMPage () {
 						))}
 					</select>
 				</div>
+
+				<div className={styles.inputGroupNotSearch}>
+					<label for="pm-status-filter">Status</label>
+					<select key="pm-status-filter" className={styles.selectInput} value={globalFilterPMStatus || ""} onChange={handleStatusChange}>
+						<option value="">All</option>
+						{pmStatusOptions.map((type) => (
+							<option key={type} value={type}>
+								{type}
+							</option>
+						))}
+					</select>
+				</div>
+
 
 				<DateRangeFilter key="date-range-picker" onRangeChange={handleDateRangeChange} startDate={globalFilterStartDate} endDate={globalFilterEndDate} />
 
