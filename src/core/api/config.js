@@ -1,5 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_SERVER_BASE_URL || 'http://localhost:5555/';
+
 const config = {
-    apiServerBaseUrl: 'http://10.70.200.43:8080/', 
+    // Use the variable exposed by Vite
+    apiServerBaseUrl: API_BASE_URL, 
 };
 
 export default config;
