@@ -1,0 +1,188 @@
+/* Container padding and background */
+.reportContainer {
+    padding: 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.header h2 {
+    color: #111827;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: -0.025em;
+}
+
+/* The main card holding the filters */
+.filterCard {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+}
+
+/* Layout Grid */
+.filterGrid {
+    display: grid;
+    grid-template-columns: 320px 1fr; /* Sidebar for vendors, main area for dates/selects */
+    gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+    .filterGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Typography for labels */
+.label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+}
+
+/* Vendor Checkbox List - Now with custom scrollbar */
+.checkboxList {
+    height: 250px;
+    overflow-y: auto;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background: #f9fafb;
+    transition: border-color 0.2s;
+}
+
+.checkboxList:focus-within {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+.checkboxItem {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.925rem;
+    color: #4b5563;
+}
+
+.checkboxItem:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.checkboxItem input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.75rem;
+    cursor: pointer;
+    accent-color: #2563eb;
+}
+
+/* Controls (Dates and Selects) */
+.controlsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modern inputs and selects */
+.input, .select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 0.95rem;
+    color: #111827;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.input:focus, .select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* Actions Area */
+.actions {
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 1.5rem;
+}
+
+.downloadButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2.5rem;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.downloadButton:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.downloadButton:active {
+    transform: translateY(0);
+}
+
+/* Loading state for vendors */
+.loadingText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    outline: none;
+    background-color: #fff;
+    transition: all 0.2s;
+}
+
+.searchInput:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Adjust checkbox list to be slightly smaller to fit the search bar */
+.checkboxList {
+    height: 200px; /* Reduced slightly from 250px */
+    overflow-y: auto;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.5rem;
+    background: #f9fafb;
+}

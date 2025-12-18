@@ -185,7 +185,7 @@ export default function PMTable ({handleEdit, handleVerifyClick, data, currentPa
 											</div>
 										) : pm.is_verified === false ? (
 											<div className={styles.rejected}>
-												<span className={styles.icon}>❌</span> Need Revise
+												<span className={styles.icon}>❌</span> Need Revision
 											</div>
 										) : (
 											<div className={styles.unverified}>

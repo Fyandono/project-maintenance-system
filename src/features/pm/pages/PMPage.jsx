@@ -17,7 +17,7 @@ import Pagination from "../../../core/components/Pagination";
 
 // Data for the new dropdown filter
 const pmTypeOptions = ["Data", "Change Request", "Incident", "Bugs Fixing", "New Project"];
-const pmStatusOptions = ["On Progress", "Need Revise", "Verified"];
+const pmStatusOptions = ["On Progress", "Need Revision", "Verified"];
 
 export default function PMPage () {
 	// ⭐️ 1. Read the projectId from the URL (e.g., /pms/123)
@@ -43,8 +43,10 @@ export default function PMPage () {
 		error,
 		filterDescription: globalFilterDescription,
 		filterProjectId: globalProjectId,
-		filterStartDate: globalFilterStartDate,
-		filterEndDate: globalFilterEndDate,
+		filterProjectStartDate: globalFilterProjectStartDate,
+		filterProjectEndDate: globalFilterProjectEndDate,
+		filterCompletionStartDate: globalFilterCompletionStartDate,
+		filterCompletionEndDate: globalFilterCompletionEndDate,
 		filterPMType: globalFilterPMType,
 		filterPMStatus: globalFilterPMStatus,
 	} = useSelector((state) => state.pms);
@@ -82,12 +84,14 @@ export default function PMPage () {
 			pageSize,
 			projectId: globalProjectId,
 			filterDescription: globalFilterDescription,
-			filterStartDate: globalFilterStartDate,
-			filterEndDate: globalFilterEndDate,
+			filterProjectStartDate: globalFilterProjectStartDate,
+			filterProjectEndDate: globalFilterProjectEndDate,
+			filterCompletionStartDate: globalFilterCompletionStartDate,
+			filterCompletionEndDate: globalFilterCompletionEndDate,
 			filterPMType: globalFilterPMType,
 			filterPMStatus: globalFilterPMStatus,
 		}),
-		[currentPage, pageSize, globalProjectId, globalFilterDescription, globalFilterStartDate, globalFilterEndDate, globalFilterPMType, globalFilterPMStatus],
+		[currentPage, pageSize, globalProjectId, globalFilterDescription, globalFilterProjectStartDate, globalFilterProjectEndDate, globalFilterCompletionStartDate, globalFilterCompletionEndDate, globalFilterPMType, globalFilterPMStatus],
 	);
 
 	// EFFECT 3: Fetch pms whenever filters (including the stable projectId) change
@@ -115,12 +119,18 @@ export default function PMPage () {
 		dispatch(setFilter({name: "filterPMStatus", value: e.target.value}));
 	};
 
-	const handleDateRangeChange = (dates) => {
-		console.log(dates);
+	const handleDateRangeChange = (dates) => { 
 		const [startDate, endDate] = dates;
-		dispatch(setFilter({name: "filterStartDate", value: startDate || ""}));
-		dispatch(setFilter({name: "filterEndDate", value: endDate || ""}));
+		dispatch(setFilter({name: "filterProjectStartDate", value: startDate || ""}));
+		dispatch(setFilter({name: "filterProjectEndDate", value: endDate || ""}));
 	};
+
+	const handleDateRangeChangeCompletion = (dates) => {
+		const [startDate, endDate] = dates;
+		dispatch(setFilter({name: "filterCompletionStartDate", value: startDate || ""}));
+		dispatch(setFilter({name: "filterCompletionEndDate", value: endDate || ""}));
+	};
+
 
 	// CREATE/EDIT Handler
 	const handlePMSubmit = (data) => {
@@ -149,7 +159,7 @@ export default function PMPage () {
 	// VERIFY/REJECT Handler (Using user's provided function name)
 	const handleVerify = (data) => {
 		handleCloseBanner();
-		const action = data.is_verified ? "verified" : "informed as need revise";
+		const action = data.is_verified ? "verified" : "informed as Need Revision";
 
 		dispatch(verifyPMthunk(data))
 			.unwrap()
@@ -234,7 +244,8 @@ export default function PMPage () {
 				</div>
 
 
-				<DateRangeFilter key="date-range-picker" onRangeChange={handleDateRangeChange} startDate={globalFilterStartDate} endDate={globalFilterEndDate} />
+				<DateRangeFilter key="p-date-range-picker" onRangeChange={handleDateRangeChange} startDate={globalFilterProjectStartDate} endDate={globalFilterProjectEndDate} />
+				<DateRangeFilter key="c-date-range-picker" onRangeChange={handleDateRangeChangeCompletion} startDate={globalFilterCompletionStartDate} endDate={globalFilterCompletionEndDate} />	
 
 				{canAddPM && (
 					<div className={styles.verticalDivider}>

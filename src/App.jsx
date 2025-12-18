@@ -5,13 +5,14 @@ import VendorPage from "./features/vendor/pages/VendorPage";
 import ProjectPage from "./features/project/pages/ProjectPage";
 import PermissionProtectedRoute from "./core/components/PermissionProtectedRoute";
 import PMPage from "./features/pm/pages/PMPage";
-import Navbar from "./core/components/NavBar";
+import Navbar from "./core/components/Navbar";
 import UserPage from "./features/user/pages/UserPage";
 import PMDetailPage from "./features/pm/pages/PMDetailPage";
 import UnitPage from "./features/unit/pages/UnitPage";
 import RolePage from "./features/role/pages/RolePage";
 import ChangePasswordPage from "./features/auth/pages/ChangePasswordPage";
 import UnauthorizedPage from "./features/unauthorized/UnauthorizedPage";
+import ReportPage from "./features/report/pages/ReportPage";
 
 export default function App () {
 	const location = useLocation();
@@ -87,6 +88,15 @@ export default function App () {
 						element={
 							<PermissionProtectedRoute>
 								<RolePage />
+							</PermissionProtectedRoute>
+						}
+					/>
+
+					<Route
+						path="/report"
+						element={
+							<PermissionProtectedRoute>
+								<ReportPage />
 							</PermissionProtectedRoute>
 						}
 					/>

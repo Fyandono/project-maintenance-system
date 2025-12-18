@@ -249,7 +249,7 @@ const PMDetailPage = () => {
 							)}
 							{isRejected && (
 								<div className={styles.rejected}>
-									<span className={styles.icon}>❌</span> Need Revise
+									<span className={styles.icon}>❌</span> Need Revision
 								</div>
 							)}
 							{isWaiting && (

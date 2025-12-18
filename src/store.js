@@ -11,19 +11,37 @@ import unitReducer from './features/unit/unitSlice';
 import roleReducer from './features/role/roleSlice';
 import rolesReducer from './features/user/roleSlice';
 import changePasswordReducer from './features/auth/changePasswordSlice';
+import reportReducer from './features/report/reportSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+
+    // vendor
     vendors: vendorsReducer, 
+
+    // project
     projects: projectsReducer,
+
+    // pm
     pms: pmReducer,
     pmDetail: pmDetailReducer,
+
+    // unit
     units: unitsReducer,
+
+    // user
     users: userReducer,
     unit: unitReducer,
+
+    // role
     role: roleReducer,
     roles: rolesReducer,
-    changePassword: changePasswordReducer
+
+    // change password
+    changePassword: changePasswordReducer,
+
+    // report
+    reports: reportReducer,
   },
 });

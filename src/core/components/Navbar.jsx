@@ -18,6 +18,7 @@ const Navbar = () => {
 	const canViewUser = user?.can_get_user === true;
 	const canViewUnit = user?.can_get_unit === true;
 	const canViewRole = user?.can_get_role === true;
+	const canViewReport = user?.can_get_pm === true;
 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const dropdownRef = useRef(null);
@@ -55,6 +56,7 @@ const Navbar = () => {
 		{name: "Master Unit", path: "/unit", requiredPermission: canViewUnit},
 		{name: "Master User", path: "/user", requiredPermission: canViewUser},
 		{name: "Master Role", path: "/role", requiredPermission: canViewRole},
+		{name: "Report", path: "/report", requiredPermission: canViewReport},
 	];
 
 	// Filter nav links based on user permissions

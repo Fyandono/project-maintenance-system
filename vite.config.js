@@ -22,6 +22,5 @@ export default defineConfig(({ mode }) => {
       port: env.VITE_DEV_SERVER_PORT ? parseInt(env.VITE_DEV_SERVER_PORT) : defaultPort, 
       open: true, 
     },
-    base: '/project-monitoring-system/',
   };
 });
