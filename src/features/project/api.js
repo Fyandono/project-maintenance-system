@@ -55,3 +55,21 @@ export const putProject = async (data) =>{
   
   return response.data;
 };
+
+export const getReportList = async (filters) => {
+  const params = {
+    vendor_id: filters.vendorId,
+    name: filters.filterName,      
+    page: filters.currentPage,     
+    page_size: filters.pageSize,
+    is_report: true   
+  };
+
+  const response = await apiController({
+            method: 'get',
+            endpoint: '/x/project',
+            params: params
+        });
+  
+  return response.data;
+};

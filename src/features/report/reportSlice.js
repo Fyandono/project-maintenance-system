@@ -1,5 +1,8 @@
+import React from "react";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getReportList, getVendorList } from './api'; // Added getVendorsList here
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const initialState = {
     // --- Data State ---
@@ -20,79 +23,65 @@ const initialState = {
     error: null,
 };
 
-// // 1. Existing Thunk for Downloading/Fetching the Report
-// export const fetchReportThunk = createAsyncThunk(
-//     'reports/fetchReport',
-//     async (filters, { rejectWithValue }) => {
-//         try {
-//             const data = await getReportList(filters);
-//             return data;
-//         } catch (error) {
-//             return rejectWithValue(error.response?.data?.message || 'Failed to retrieve report.');
-//         }
-//     }
-// );
+// 1. Existing Thunk for Downloading/Fetching the Report
 export const fetchReportThunk = createAsyncThunk(
-    'reports/fetchReport',
+    "reports/fetchReport",
     async (filters, { rejectWithValue }) => {
         try {
-            const response = await getReportList(filters);
-            const data = response.data;
+            // 1. Fetch the data from your API
+            const response = await getReportList(filters); 
+            const data = response.data; // Assuming this is your array of vendors
 
-            if (!data || data.length === 0) {
-                return rejectWithValue("No data found for the selected filters.");
-            }
+            // 2. Create the Excel Workbook
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Report");
 
-            const headers = Object.keys(data[0]);
+            // 3. Define Columns (Adding the ID column)
+            worksheet.columns = [
+                { header: 'Vendor', key: 'vendor_name', width: 20 },
+                { header: 'Project Name', key: 'project_name', width: 25 },
+                { header: 'Project Type', key: 'project_type', width: 25},
+                { header: 'Task / Description', key: 'pm_task', width: 35 },
+                { header: 'Solution', key: 'pm_solution', width: 35 },
+                { header: 'Type', key: 'pm_type', width: 15 },
+                { header: 'PIC Name', key: 'pic_name', width: 20 },
+                { header: 'PIC Email', key: 'pic_email', width: 20 },
+                { header: 'PIC Unit', key: 'pic_unit', width: 20 },
+                { header: 'Project Date', key: 'pm_project_date', width: 15 },
+                { header: 'Completion Date', key: 'pm_completion_date', width: 15 },
+                { header: 'Status', key: 'status', width: 15 },
+                { header: 'PM Verified By', key: 'pm_verified_by', width: 15 },
+                { header: 'PM Verified At', key: 'pm_verified_at', width: 20 },
+                { header: 'PM Created At', key: 'pm_created_at', width: 20 },
+                { header: 'PM Created By', key: 'pm_created_by', width: 20 },
+                { header: 'PM Updated At', key: 'pm_updated_at', width: 20 },
+                { header: 'PM Updated By', key: 'pm_updated_by', width: 20 },
+                { header: 'Note', key: 'note', width: 40 },
+            ];
 
-            const csvContent = [
-                headers.join(','), 
-                ...data.map(row => headers.map(fieldName => {
-                    let value = row[fieldName];
+            // Process rows and format the Note JSON
+            data.forEach((row) => {
+                worksheet.addRow({
+                    ...row,
+                    note: String(row.note || "")
+                });
+            });
 
-                    // ⭐️ SPECIAL FIX FOR NOTE COLUMN (JSON LIST)
-                    if (fieldName === 'note' && value) {
-                        try {
-                            // If it's a string that looks like JSON, parse it
-                            const parsedNote = typeof value === 'string' ? JSON.parse(value) : value;
-                            
-                            // If it's a list, join it with semicolons or newlines
-                            if (Array.isArray(parsedNote)) {
-                                value = parsedNote.map(item => 
-                                    typeof item === 'object' ? JSON.stringify(item) : item
-                                ).join('; '); // Semicolons work best inside CSV cells
-                            } else if (typeof parsedNote === 'object') {
-                                value = JSON.stringify(parsedNote);
-                            }
-                        } catch (e) {
-                            // If parsing fails, just use the raw value
-                            value = String(value);
-                        }
-                    }
-
-                    // Handle null/undefined
-                    const finalValue = value ?? "";
-                    
-                    // Escape double quotes and wrap in quotes for CSV safety
-                    const stringValue = String(finalValue).replace(/"/g, '""');
-                    return `"${stringValue}"`;
-                }).join(','))
-            ].join('\r\n');
-
-            // Trigger Download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `Report_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(url);
+            // Style the header
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFE0E0E0' }
+                    };
+            // 5. Generate Buffer and Trigger Download
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            saveAs(blob, `Report_${new Date().toISOString().slice(0,10)}.xlsx`);
 
             return data;
         } catch (error) {
-            return rejectWithValue(error.response?.data?.message || 'Failed to generate CSV.');
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -139,7 +128,7 @@ const reportSlice = createSlice({
             })
             .addCase(fetchReportThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
-                // You can store report results here if you aren't just downloading a file
+                state.reportData = action.payload.data || [];
             })
             .addCase(fetchReportThunk.rejected, (state, action) => {
                 state.isLoading = false;

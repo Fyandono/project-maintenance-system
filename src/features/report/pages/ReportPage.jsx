@@ -14,11 +14,12 @@ export default function ReportPage() {
         filterListVendorId, 
         filterProjectStartDate, 
         filterProjectEndDate, 
-		filterCompletionStartDate, 
+        filterCompletionStartDate, 
         filterCompletionEndDate, 
         filterPMType, 
         filterPMStatus,
-        isLoading // Global loading state for the download thunk
+        isLoading,
+        reportData // Ensure your thunk/slice updates this state
     } = useSelector((state) => state.reports || {});
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -37,13 +38,13 @@ export default function ReportPage() {
         }
     }, [dispatch]);
 
-    // 3. FILTERS OBJECT: Using useMemo to mirror your PMPage structure
+    // 3. FILTERS OBJECT: Memoized to match backend DTO
     const filters = useMemo(
         () => ({
             list_vendor_id: filterListVendorId || '',
             project_start_date: filterProjectStartDate || '',
             project_end_date: filterProjectEndDate || '',
-			completion_start_date: filterCompletionStartDate || '',
+            completion_start_date: filterCompletionStartDate || '',
             completion_end_date: filterCompletionEndDate || '',
             pm_type: filterPMType || '',
             pm_status: filterPMStatus || ''
@@ -51,11 +52,7 @@ export default function ReportPage() {
         [filterListVendorId, filterProjectStartDate, filterProjectEndDate, filterCompletionStartDate, filterCompletionEndDate, filterPMType, filterPMStatus]
     );
 
-    // 4. HANDLERS
-    const filteredVendors = vendors.filter((vendor) =>
-        vendor.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
+    // 6. HANDLERS
     const handleFilterChange = (name, value) => {
         dispatch(setReportFilter({ name, value }));
     };
@@ -70,14 +67,17 @@ export default function ReportPage() {
         dispatch(setReportFilter({ name: 'filterListVendorId', value: currentIds.join(',') }));
     };
 
+    const filteredVendors = vendors.filter((vendor) =>
+        vendor.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const handleDownloadReport = () => {
         setSubmissionMessage(null);
-        // Dispatch the thunk using the memoized filters object
         dispatch(fetchReportThunk(filters))
             .unwrap()
             .then(() => {
                 setSubmissionStatus("success");
-                setSubmissionMessage("Report generation started successfully.");
+                setSubmissionMessage("Report data fetched. Download starting...");
             })
             .catch((err) => {
                 setSubmissionStatus("failure");
@@ -91,11 +91,14 @@ export default function ReportPage() {
                 <h2>Report Project Monitor</h2>
             </div>
 
-            <StatusBanner message={submissionMessage} type={submissionStatus} onClose={() => setSubmissionMessage(null)} />
+            <StatusBanner 
+                message={submissionMessage} 
+                type={submissionStatus} 
+                onClose={() => setSubmissionMessage(null)} 
+            />
 
             <div className={styles.filterCard}>
                 <div className={styles.filterGrid}>
-                    
                     {/* VENDOR SIDEBAR */}
                     <div className={styles.filterGroup}>
                         <label className={styles.label}>Vendors</label>
@@ -130,7 +133,7 @@ export default function ReportPage() {
                     {/* DATES & DROPDOWNS */}
                     <div className={styles.controlsGrid}>
                         <div className={styles.filterGroup}>
-                            <label className={styles.label}>Start Date</label>
+                            <label className={styles.label}>Project Start Date</label>
                             <input 
                                 type="date" 
                                 className={styles.input}
@@ -140,7 +143,7 @@ export default function ReportPage() {
                         </div>
 
                         <div className={styles.filterGroup}>
-                            <label className={styles.label}>End Date</label>
+                            <label className={styles.label}>Project End Date</label>
                             <input 
                                 type="date" 
                                 className={styles.input}
@@ -149,8 +152,8 @@ export default function ReportPage() {
                             />
                         </div>
 
-						<div className={styles.filterGroup}>
-                            <label className={styles.label}>Start Date</label>
+                        <div className={styles.filterGroup}>
+                            <label className={styles.label}>Completion Start Date</label>
                             <input 
                                 type="date" 
                                 className={styles.input}
@@ -160,7 +163,7 @@ export default function ReportPage() {
                         </div>
 
                         <div className={styles.filterGroup}>
-                            <label className={styles.label}>End Date</label>
+                            <label className={styles.label}>Completion End Date</label>
                             <input 
                                 type="date" 
                                 className={styles.input}
@@ -168,7 +171,6 @@ export default function ReportPage() {
                                 onChange={(e) => handleFilterChange('filterCompletionEndDate', e.target.value)}
                             />
                         </div>
-
 
                         <div className={styles.filterGroup}>
                             <label className={styles.label}>PM Type</label>
@@ -202,7 +204,7 @@ export default function ReportPage() {
 
                 <div className={styles.actions}>
                     <button 
-                        type="button" 
+                       type="button" 
                         className={styles.downloadButton} 
                         onClick={handleDownloadReport}
                         disabled={isLoading}

@@ -126,18 +126,16 @@
 }
 
 .downloadButton {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 2.5rem;
-    background-color: #2563eb;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: all 0.2s;
+	padding: 8px 16px;
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	border-radius: 4px;
+	font-size: 0.9em;
+	cursor: pointer;
+	font-weight: 600;
+	white-space: nowrap;
+	transition: 0.2s;
 }
 
 .downloadButton:hover {

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setFilter, fetchProjectsThunk, createProjectThunk, editProjectThunk} from "../projectSlice";
+import {setFilter, fetchProjectsThunk, createProjectThunk, editProjectThunk, fetchReportThunk} from "../projectSlice";
 import ProjectTable from "../components/ProjectTable";
 import useDebounce from "../../../core/hooks/useDebounce";
 import styles from "./ProjectPage.module.css";
@@ -10,6 +10,7 @@ import CircularLoader from "../../../core/components/CircularLoader";
 import CreateEditProjectModal from "../form/CreateEditProjectModal";
 import StatusBanner from "../../../core/components/StatusBanner";
 import Pagination from "../../../core/components/Pagination";
+import { FaDownload } from "react-icons/fa";
 
 export default function ProjectPage () {
 	let params = useParams();
@@ -99,9 +100,6 @@ export default function ProjectPage () {
 				setSubmissionStatus("failure");
 				setSubmissionMessage(`Failed to ${action} project: ${message}`);
 
-				// Keep modal open on failure
-				// setIsModalVisible(true); // already true
-
 				console.error("Project submission failed:", error);
 			});
 	};
@@ -119,6 +117,29 @@ export default function ProjectPage () {
 		handleCloseBanner();
 	};
 
+	const handleDownload = () => {
+			// Clear previous banner message
+			handleCloseBanner();
+	
+			const thunk = fetchReportThunk(filters);
+			const action = "download";
+	
+			dispatch(thunk)
+				.unwrap()
+				.then(() => {
+					setIsModalVisible(false);
+					setSubmissionStatus("success");
+					setSubmissionMessage(`Project successfully ${action}.`);
+				})
+				.catch ((error) => {
+					const message = error.message || error.toString() || "An unknown error occurred.";
+					setSubmissionStatus("failure");
+					setSubmissionMessage(`Failed to ${action} vendor: ${message}`);
+					console.error("Project submission failed:", error);
+				});
+		};
+	
+
 	return (
 		<div className={styles.projectContainer}>
 			<div className={styles.breadcrumb}>
@@ -132,6 +153,11 @@ export default function ProjectPage () {
 
 			<div className={styles.controlRow}>
 				<input key="project-search-input" type="text" placeholder="Search projects" value={localSearchTerm} onChange={handleSearchChange} />
+
+				<button className={styles.detailButton} onClick={() => handleDownload()}>
+					<FaDownload size={10} className={styles.buttonIcon} />
+					Report
+				</button>
 
 				{canAddProject && (
 					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>

@@ -1,89 +1,41 @@
-.container {
-	position: relative;
-	display: inline-block;
+/* Container that looks like your other input groups */
+.dateRangeGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 2; /* Adjusted flex to sit nicely between search and buttons */
+    min-width: 250px;
 }
-.button {
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	cursor: pointer;
-	min-width: 200px;
-	text-align: left;
-	margin-left: 10px;
-	background-color: #fff;
+
+/* Match your existing label style */
+.dateRangeGroup label {
+    font-size: 12px; /* Matching your input font-size */
+    margin-bottom: 4px;
+    font-weight: normal;
+    color: inherit;
 }
-.calendarPopup {
-	position: absolute;
-	z-index: 1000;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	top: 100%;
-	right: 0;
-	margin-top: 5px;
+
+/* The horizontal container for the two dates */
+.inputsContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 5px;
 }
-.footer {
-	text-align: right;
-	padding: 10px;
-}
-.closeButton {
-	padding: 5px 10px;
-	cursor: pointer;
-	border: 1px solid #ddd;
-	background-color: #f0f0f0;
-	border-radius: 4px;
-}
-.dateRangeContainer {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-.separator {
-	align-content: bottom;
-}
-.dateInputGroup {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-.label {
-	font-size: 0.75rem;
-	color: #555;
-	font-weight: 600;
-}
+
+/* Match your .inputGroup input exactly */
 .dateInput {
-	padding: 8px 10px;
-	border: 1px solid #ccc;
-	border-radius: 6px;
-	font-size: 10px;
-	transition: border-color 0.2s;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 10px;
+    box-sizing: border-box;
+    color: inherit;
+    background-color: white;
 }
-.dateInput:focus {
-	border-color: #3b82f6;
-	outline: 0;
-}
-.resetButton {
-	padding: 8px 12px;
-	background-color: #ff4d4f;
-	color: #fff;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	font-weight: 500;
-	transition: background-color 0.2s;
-	height: 100%;
-	align-self: flex-end;
-}
-.resetButton:hover:not(:disabled) {
-	background-color: #d9363e;
-}
-.resetButton:disabled {
-	background-color: #ccc;
-	cursor: not-allowed;
-}
-.inputGroup {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
+
+.separator {
+    font-size: 10px;
+    color: #aaa;
 }

@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setFilter, fetchVendorsThunk, createVendorThunk, editVendorThunk} from "../vendorSlice";
+import {setFilter, fetchVendorsThunk, createVendorThunk, editVendorThunk, fetchReportThunk} from "../vendorSlice";
 import VendorTable from "../components/VendorTable";
 import useDebounce from "../../../core/hooks/useDebounce";
 import styles from "./VendorPage.module.css";
@@ -8,6 +8,7 @@ import CreateEditVendorModal from "../form/CreateEditVendorModal";
 import CircularLoader from "../../../core/components/CircularLoader";
 import Pagination from "../../../core/components/Pagination";
 import StatusBanner from "../../../core/components/StatusBanner";
+import { FaDownload } from "react-icons/fa";
 
 export default function VendorPage () {
 	const dispatch = useDispatch();
@@ -84,6 +85,28 @@ export default function VendorPage () {
 			});
 	};
 
+	const handleDownload = () => {
+		// Clear previous banner message
+		handleCloseBanner();
+
+		const thunk = fetchReportThunk(filters);
+		const action = "download";
+
+		dispatch(thunk)
+			.unwrap()
+			.then(() => {
+				setIsModalVisible(false);
+				setSubmissionStatus("success");
+				setSubmissionMessage(`Vendor successfully ${action}.`);
+			})
+			.catch ((error) => {
+				const message = error.message || error.toString() || "An unknown error occurred.";
+				setSubmissionStatus("failure");
+				setSubmissionMessage(`Failed to ${action} vendor: ${message}`);
+				console.error("Vendor submission failed:", error);
+			});
+	};
+
 	const handleCloseBanner = () => {
 		setSubmissionMessage(null);
 		setSubmissionStatus(null);
@@ -110,6 +133,11 @@ export default function VendorPage () {
 
 			<div className={styles.controlRow}>
 				<input key="vendor-search-input" type="text" placeholder="Search vendors" value={localSearchTerm} onChange={handleSearchChange} />
+
+				<button className={styles.detailButton} onClick={() => handleDownload()}>
+					<FaDownload size={10} className={styles.buttonIcon} />
+					Report
+				</button>
 
 				{canAddVendor && (
 					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {createUnitThunk, editUnitThunk, fetchUnitsThunk, setFilter} from "../unitSlice";
+import {createUnitThunk, editUnitThunk, fetchUnitsThunk, setFilter, fetchReportThunk} from "../unitSlice";
 import styles from "./UnitPage.module.css";
 import useDebounce from "../../../core/hooks/useDebounce";
 import CircularLoader from "../../../core/components/CircularLoader";
@@ -8,6 +8,7 @@ import UnitTable from "../components/UnitTable";
 import CreateEditUnitModal from "../form/CreateEditUnitModal";
 import StatusBanner from "../../../core/components/StatusBanner";
 import Pagination from "../../../core/components/Pagination";
+import { FaDownload } from "react-icons/fa";
 
 export default function UnitPage () {
 	const dispatch = useDispatch();
@@ -109,6 +110,28 @@ export default function UnitPage () {
 		handleCloseBanner();
 	};
 
+	const handleDownload = () => {
+		// Clear previous banner message
+		handleCloseBanner();
+
+		const thunk = fetchReportThunk(filters);
+		const action = "download";
+
+		dispatch(thunk)
+			.unwrap()
+			.then(() => {
+				setIsModalVisible(false);
+				setSubmissionStatus("success");
+				setSubmissionMessage(`Unit successfully ${action}.`);
+			})
+			.catch ((error) => {
+				const message = error.message || error.toString() || "An unknown error occurred.";
+				setSubmissionStatus("failure");
+				setSubmissionMessage(`Failed to ${action} vendor: ${message}`);
+				console.error("Unit submission failed:", error);
+			});
+	};
+
 	return (
 		<div className={styles.unitContainer}>
 			<h1>Units</h1>
@@ -117,6 +140,11 @@ export default function UnitPage () {
 
 			<div className={styles.controlRow}>
 				<input key="unit-search-input" type="text" placeholder="Search unit" value={localSearchTerm} onChange={handleSearchChange} />
+
+				<button className={styles.detailButton} onClick={() => handleDownload()}>
+					<FaDownload size={10} className={styles.buttonIcon} />
+					Report
+				</button>
 
 				{canAddUnit && (
 					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>

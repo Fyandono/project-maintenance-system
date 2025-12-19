@@ -179,3 +179,51 @@
     right: 10px;
     z-index: 999;
 }
+
+.detailButton {
+	padding: 8px 16px;
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.9em;
+	font-weight: 600;
+	transition: background-color 0.2s;
+}
+.detailButton:hover {
+	background-color: #0056b3;
+}
+.buttonIcon {
+	margin-right: 2px;
+	line-height: 1;
+}
+
+.resetButton {
+    padding: 8px 16px;
+    background-color: #f0f0f0; /* Light gray to differentiate from primary buttons */
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.resetButton:hover:not(:disabled) {
+    background-color: #e0e0e0;
+}
+
+.resetButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Grouping the buttons together at the end of the row */
+.actionGroup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}   

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setFilter, fetchUsersThunk, createUserThunk, editUserThunk} from "../userSlice";
+import {setFilter, fetchUsersThunk, createUserThunk, editUserThunk, fetchReportThunk} from "../userSlice";
 import UserTable from "../components/UserTable";
 import useDebounce from "../../../core/hooks/useDebounce";
 import styles from "./UserPage.module.css";
@@ -8,6 +8,7 @@ import CreateEditUserModal from "../form/CreateEditUserModal";
 import CircularLoader from "../../../core/components/CircularLoader";
 import Pagination from "../../../core/components/Pagination";
 import StatusBanner from "../../../core/components/StatusBanner";
+import { FaDownload } from "react-icons/fa";
 
 export default function UserPage () {
 	const dispatch = useDispatch();
@@ -107,6 +108,28 @@ export default function UserPage () {
 		handleCloseBanner();
 	};
 
+	const handleDownload = () => {
+		// Clear previous banner message
+		handleCloseBanner();
+
+		const thunk = fetchReportThunk(filters);
+		const action = "download";
+
+		dispatch(thunk)
+			.unwrap()
+			.then(() => {
+				setIsModalVisible(false);
+				setSubmissionStatus("success");
+				setSubmissionMessage(`User successfully ${action}.`);
+			})
+			.catch ((error) => {
+				const message = error.message || error.toString() || "An unknown error occurred.";
+				setSubmissionStatus("failure");
+				setSubmissionMessage(`Failed to ${action} vendor: ${message}`);
+				console.error("User submission failed:", error);
+			});
+	};
+
 	return (
 		<div className={styles.userContainer}>
 			<h1>Users</h1>
@@ -115,6 +138,12 @@ export default function UserPage () {
 
 			<div className={styles.controlRow}>
 				<input key="user-search-input" type="text" placeholder="Search user or username" value={localSearchTerm} onChange={handleSearchChange} />
+
+				<button className={styles.detailButton} onClick={() => handleDownload()}>
+					<FaDownload size={10} className={styles.buttonIcon} />
+					Report
+				</button>
+
 				{canAddUser && (
 					<button type="button" className={styles.createButton} onClick={handleOnClickCreate} disabled={isLoading}>
 						+ Create User

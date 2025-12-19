@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {setFilter, fetchPMSThunk, createPMthunk, verifyPMthunk, editPMThunk} from "../pmSlice";
+import {setFilter, fetchPMSThunk, createPMthunk, verifyPMthunk, editPMThunk, fetchReportThunk} from "../pmSlice";
 import styles from "./PmPage.module.css";
 import {useParams} from "react-router-dom";
 import PMTable from "../components/PMTable";
@@ -14,6 +14,7 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 import DateRangeFilter from "../../../core/components/DateRangePicker";
 import StatusBanner from "../../../core/components/StatusBanner";
 import Pagination from "../../../core/components/Pagination";
+import { FaDownload } from "react-icons/fa";
 
 // Data for the new dropdown filter
 const pmTypeOptions = ["Data", "Change Request", "Incident", "Bugs Fixing", "New Project"];
@@ -197,6 +198,40 @@ export default function PMPage () {
 		handleCloseBanner();
 	};
 
+	const handleDownload = () => {
+			// Clear previous banner message
+			handleCloseBanner();
+	
+			const thunk = fetchReportThunk(filters);
+			const action = "download";
+	
+			dispatch(thunk)
+				.unwrap()
+				.then(() => {
+					setIsModalVisible(false);
+					setSubmissionStatus("success");
+					setSubmissionMessage(`User successfully ${action}.`);
+				})
+				.catch ((error) => {
+					const message = error.message || error.toString() || "An unknown error occurred.";
+					setSubmissionStatus("failure");
+					setSubmissionMessage(`Failed to ${action} vendor: ${message}`);
+					console.error("User submission failed:", error);
+				});
+		};
+	
+	const handleResetAll = () => {
+		setLocalSearchTerm("");
+		dispatch(setFilter({ name: "filterDescription", value: "" }));
+		dispatch(setFilter({ name: "filterPMType", value: "" }));
+		dispatch(setFilter({ name: "filterPMStatus", value: "" }));
+		dispatch(setFilter({ name: "filterProjectStartDate", value: null }));
+		dispatch(setFilter({ name: "filterProjectEndDate", value: null }));
+		dispatch(setFilter({ name: "filterCompletionStartDate", value: null }));
+		dispatch(setFilter({ name: "filterCompletionEndDate", value: null }));
+		dispatch(setFilter({ name: "currentPage", value: 1 }));
+	};
+
 	// Determine which handler to pass to the modal
 	const currentSubmitHandler = verifyData ? handleVerify : handlePMSubmit;
 
@@ -244,8 +279,30 @@ export default function PMPage () {
 				</div>
 
 
-				<DateRangeFilter key="p-date-range-picker" onRangeChange={handleDateRangeChange} startDate={globalFilterProjectStartDate} endDate={globalFilterProjectEndDate} />
-				<DateRangeFilter key="c-date-range-picker" onRangeChange={handleDateRangeChangeCompletion} startDate={globalFilterCompletionStartDate} endDate={globalFilterCompletionEndDate} />	
+				<DateRangeFilter 
+					label="Project Period"
+					onRangeChange={handleDateRangeChange} 
+					startDate={globalFilterProjectStartDate} 
+					endDate={globalFilterProjectEndDate} 
+				/>
+				
+				<DateRangeFilter 
+					label="Completion Period"
+					onRangeChange={handleDateRangeChangeCompletion} 
+					startDate={globalFilterCompletionStartDate} 
+					endDate={globalFilterCompletionEndDate} 
+				/>
+
+				<div className={styles.actionGroup}>
+					<button className={styles.resetButton} onClick={handleResetAll}>
+						Reset All
+					</button>
+
+					<button className={styles.detailButton} onClick={handleDownload} disabled={isLoading}>
+						<FaDownload size={10} className={styles.buttonIcon} />
+						Report
+					</button>
+				</div>
 
 				{canAddPM && (
 					<div className={styles.verticalDivider}>

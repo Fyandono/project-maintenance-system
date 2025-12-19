@@ -32,3 +32,19 @@ export const putRole = async (data) => {
         });
   return response.data;
 };
+
+export const getReportList = async (filters) => {
+
+  const params = {
+    name: filters.filterName,      
+    page: filters.currentPage,     
+    page_size: filters.pageSize,   
+    is_report: true,
+  };
+  const response = await apiController({
+            method: 'get',
+            endpoint: '/x/role',
+            params: params
+        });
+  return response.data;
+};

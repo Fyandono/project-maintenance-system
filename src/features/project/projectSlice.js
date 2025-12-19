@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getProjectsList, postProject, putProject } from './api'; 
+import { getProjectsList, postProject, putProject, getReportList} from './api'; 
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 // --- Initial State ---
 const initialState = {
@@ -57,6 +59,63 @@ export const editProjectThunk = createAsyncThunk(
         } catch (error) {
             // Use response data for detailed error message if available
             return rejectWithValue(error.response?.data?.message || 'Failed to create project.');
+        }
+    }
+);
+
+export const fetchReportThunk = createAsyncThunk(
+    "projects/fetchReport",
+    async (filters, { rejectWithValue }) => {
+        try {
+            // 1. Fetch the data from your API
+            const response = await getReportList(filters); 
+            const data = response.data; // Assuming this is your array of vendors
+
+            // 2. Create the Excel Workbook
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Project Report");
+
+            // 3. Define Columns (Adding the ID column)
+            worksheet.columns = [
+                { header: 'Vendor', key: 'vendor_name', width: 20 },
+                { header: 'Project Name', key: 'name', width: 25 },
+                { header: 'description', key: 'description', width: 35 },
+                { header: 'Project Type', key: 'project_type', width: 20 },
+                { header: 'PIC Email', key: 'pic_email', width: 20 },
+                { header: 'PIC Name', key: 'pic_name', width: 20 },
+                { header: 'PIC Unit', key: 'pic_unit', width: 20 },
+                { header: 'Count PM Uploaded', key: 'count_pm_uploaded', width: 20 },
+                { header: 'Count PM Verified', key: 'count_pm_verified', width: 20 },
+                { header: 'Count PM Unverified', key: 'count_pm_unverified', width: 20 },
+                { header: 'Created At', key: 'created_at', width: 20 },
+                { header: 'Created By', key: 'created_by', width: 20 },
+                { header: 'Updated At', key: 'updated_at', width: 20 },
+                { header: 'Updated By', key: 'updated_by', width: 20 },
+            ];
+
+            // Process rows and format the Note JSON
+            data.forEach((row) => {
+                worksheet.addRow({
+                    ...row,
+                    note: String(row.note || "")
+                });
+            });
+
+            // Style the header
+            worksheet.getRow(1).font = { bold: true };
+            worksheet.getRow(1).fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FFE0E0E0' }
+                    };
+            // 5. Generate Buffer and Trigger Download
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            saveAs(blob, `Project_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
+
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -132,6 +191,22 @@ const projectSlice = createSlice({
             .addCase(editProjectThunk.rejected, (state, action) => {
                 state.isEditing = false;
                 state.editError = action.payload || 'An unknown creation error occurred.';
+            })
+
+            // report
+            .addCase(fetchReportThunk.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchReportThunk.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.reportData = action.payload.data || [];
+                state.error = null;
+            })
+            .addCase(fetchReportThunk.rejected, (state, action) => {
+                state.isLoading = false;
+                state.reportData = [];
+                state.error = action.payload || "An unknown error occurred.";
             });
     },
 });
